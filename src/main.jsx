@@ -1,6 +1,6 @@
 import React, {useMemo, useRef, useState} from 'react';
 import {createRoot} from 'react-dom/client';
-import {AlarmClock, Bell, CalendarDays, Check, Heart, Home, ImagePlus, Map, MessageCircle, Plus, Search, Share2, X} from 'lucide-react';
+import {AlarmClock, CalendarDays, Check, Heart, Home, ImagePlus, Map, MessageCircle, Plus, Search, Share2, X} from 'lucide-react';
 import cmcCoins from './cmc-top100.json';
 import './styles.css';
 
@@ -9,7 +9,7 @@ const coinColors=['#f7931a','#627eea','#26a17b','#2775ca','#14f195','#23292f','#
 
 function Brand(){return <div className="brand" aria-label="코인고래"><span>ㅋ</span><span>ㅇ</span><span>ㄱ</span><span>ㄹ</span></div>}
 function CoinSymbol({symbol,small=false}){const known=coinData.find(c=>c.id===symbol);if(known)return <div className={`coin-badge ${known.className} ${small?'small':''}`}><span>{known.glyph}</span></div>;const color=coinColors[(symbol.charCodeAt(0)+symbol.length)%coinColors.length];return <div className={`coin-badge generic ${small?'small':''}`} style={{'--coin-color':color}}><span>{symbol.slice(0,4)}</span></div>}
-function Header(){return <header className="main-header"><div className="welcome"><img src={`${import.meta.env.BASE_URL}icon-192.png`} alt=""/><span>다시 만나 반가워요<b>코인고래</b></span></div><Brand/><button className="notice" aria-label="알림"><Bell/><i/></button></header>}
+function Header(){return <header className="main-header"><Brand/></header>}
 function HotCoins(){return <section className="hot-coins"><h2>🔥 코인고래 불장 코인</h2><p>지금 호들러들이 가장 불장을 지지하는 코인</p><div className="coin-row">{coinData.map(coin=><CoinSymbol key={coin.id} symbol={coin.id}/>)}</div></section>}
 
 function FeedCard({post}){const [liked,setLiked]=useState(false);return <article className="feed-card"><div className="feed-media"><img src={post.image} alt="피드 첨부"/><div className="profile-dot"><span>코</span></div><CoinSymbol symbol={post.coin} small/></div><div className="feed-copy"><p className="post-text">{post.text}</p><div className="feed-actions"><button><MessageCircle/><span>{post.comments||0}</span></button><button className={liked?'liked':''} onClick={()=>setLiked(!liked)}><Heart fill={liked?'currentColor':'none'}/><span>{(post.likes||0)+(liked?1:0)}</span></button><button><Share2/></button></div></div></article>}

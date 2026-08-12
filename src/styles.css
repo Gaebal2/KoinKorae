@@ -2,35 +2,35 @@
 /* UX Pilot bank-overview inspired visual system */
 body:has(.bank-ui){background:#e8ebe8}
 .app-shell.bank-ui{color:#171a18;background:#f7f8f5;padding-bottom:105px}
-.bank-ui .main-header{height:82px;padding:15px 18px;border:0;background:#f7f8f5;position:relative}
+.bank-ui .main-header{height:48px;padding:0;border:0;border-bottom:1px solid #e7eae7;background:#f7f8f5;position:sticky;display:flex;justify-content:center}
 .bank-ui .welcome{display:flex;align-items:center;gap:10px}
 .bank-ui .welcome img{width:42px;height:42px;border-radius:50%;object-fit:cover}
 .bank-ui .welcome span{display:flex;flex-direction:column;color:#7e847f;font-size:11px;line-height:1.35}
 .bank-ui .welcome b{color:#171a18;font-size:17px}
-.bank-ui .brand{position:absolute;left:50%;top:12px;transform:translateX(-50%);gap:3px;font-size:12px;color:#166b49;opacity:.72}
+.bank-ui .brand{position:static;transform:none;gap:6px;font-size:19px;color:#166b49;opacity:1;letter-spacing:1px}
 .bank-ui .notice{width:40px;height:40px;border:0;border-radius:50%;background:#fff;box-shadow:0 4px 18px #27382f14;position:relative}
 .bank-ui .notice svg{width:19px;stroke-width:2;color:#202421}
 .bank-ui .notice i{position:absolute;width:7px;height:7px;border-radius:50%;background:#d34b52;right:8px;top:8px;border:2px solid #fff}
-.bank-ui .main-content{padding:0 17px 25px}
-.bank-ui .feed-tabs{height:40px;margin:0 0 10px;padding:3px;border:0;border-radius:14px;background:#e8ece8}
-.bank-ui .feed-tabs button{font-size:13px;color:#737a75;border-radius:11px}
+.app-shell.bank-ui .main-content{padding:7px 12px 25px}
+.app-shell.bank-ui .feed-tabs{height:35px;margin:0 0 7px;padding:2px;border:0;border-radius:11px;background:#e8ece8}
+.app-shell.bank-ui .feed-tabs button{font-size:13px;color:#737a75;border-radius:11px}
 .bank-ui .feed-tabs button.active{background:#fff;color:#176b49;box-shadow:0 4px 13px #1b352717}
-.bank-ui .hot-coins{height:151px;margin:0 0 25px;padding:17px 18px;border:0;border-radius:20px;background:#146b48;color:#fff;box-shadow:0 12px 26px #14583a2e;position:relative}
+.app-shell.bank-ui .hot-coins{height:86px;margin:0 0 9px;padding:10px 12px;border:0;border-radius:15px;background:#146b48;color:#fff;box-shadow:0 7px 18px #14583a24;position:relative}
 .bank-ui .hot-coins:after{content:'';position:absolute;width:150px;height:150px;border:1px solid #ffffff12;border-radius:50%;right:-53px;top:-75px}
-.bank-ui .hot-coins h2{font-size:16px;line-height:1.35}
-.bank-ui .hot-coins p{font-size:11px;color:#cce0d6;margin:2px 0 13px}
+.app-shell.bank-ui .hot-coins h2{font-size:12px;line-height:1.2;margin-bottom:7px}
+.app-shell.bank-ui .hot-coins p{display:none}
 .bank-ui .hot-coins .coin-row{gap:10px;position:relative;z-index:1}
-.bank-ui .hot-coins .coin-badge{width:48px;height:48px;border:2px solid #ffffffd9;background:#fff}
-.bank-ui .hot-coins .coin-badge.bitcoin span{width:40px;height:40px;font-size:28px}
-.bank-ui .hot-coins .coin-badge.ethereum span{font-size:28px}
-.bank-ui .hot-coins .coin-badge.solana span{font-size:38px}
-.bank-ui .hot-coins .coin-badge.xrp span{font-size:34px}
-.bank-ui .hot-coins .coin-badge.cardano span{font-size:31px}
-.bank-ui .feed-card{padding:9px;margin-bottom:18px;border:0;border-radius:21px;background:#fff;box-shadow:0 8px 28px #2a3b3012}
-.bank-ui .feed-card:before{content:'최신 피드';display:block;margin:4px 4px 10px;color:#171a18;font-size:17px;font-weight:800}
-.bank-ui .feed-media{height:218px;border-radius:16px}
-.bank-ui .feed-copy{padding:13px 7px 5px}
-.bank-ui .post-text{color:#242824;font-size:15px;font-weight:700;line-height:1.52}
+.bank-ui .hot-coins .coin-badge{width:38px;height:38px;border:2px solid #ffffffd9;background:#fff}
+.bank-ui .hot-coins .coin-badge.bitcoin span{width:32px;height:32px;font-size:22px}
+.bank-ui .hot-coins .coin-badge.ethereum span{font-size:22px}
+.bank-ui .hot-coins .coin-badge.solana span{font-size:30px}
+.bank-ui .hot-coins .coin-badge.xrp span{font-size:27px}
+.bank-ui .hot-coins .coin-badge.cardano span{font-size:24px}
+.app-shell.bank-ui .feed-card{padding:9px;margin-bottom:18px;border:0;border-radius:21px;background:#fff;box-shadow:0 8px 28px #2a3b3012}
+.bank-ui .feed-card:before{content:none}
+.app-shell.bank-ui .feed-media{height:196px;border-radius:16px}
+.app-shell.bank-ui .feed-copy{padding:10px 7px 4px}
+.bank-ui .post-text{color:#242824;font-size:14px;font-weight:700;line-height:1.48;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
 .bank-ui .profile-dot{border-color:#fff;box-shadow:0 3px 10px #0004}
 .bank-ui .feed-actions{color:#8a918c;border-top:1px solid #edf0ed;margin-top:12px;padding-top:10px;height:38px}
 .bank-ui .bottom-nav{bottom:14px;left:50%;transform:translateX(-50%);width:min(calc(100% - 32px),373px);height:70px;border:0;border-radius:35px;background:#303330;box-shadow:0 12px 30px #1a261f35;overflow:visible;padding:0 12px}
