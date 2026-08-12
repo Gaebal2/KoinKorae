@@ -1,4 +1,60 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800&display=swap');
+/* UX Pilot bank-overview inspired visual system */
+body:has(.bank-ui){background:#e8ebe8}
+.app-shell.bank-ui{color:#171a18;background:#f7f8f5;padding-bottom:105px}
+.bank-ui .main-header{height:82px;padding:15px 18px;border:0;background:#f7f8f5;position:relative}
+.bank-ui .welcome{display:flex;align-items:center;gap:10px}
+.bank-ui .welcome img{width:42px;height:42px;border-radius:50%;object-fit:cover}
+.bank-ui .welcome span{display:flex;flex-direction:column;color:#7e847f;font-size:11px;line-height:1.35}
+.bank-ui .welcome b{color:#171a18;font-size:17px}
+.bank-ui .brand{position:absolute;left:50%;top:12px;transform:translateX(-50%);gap:3px;font-size:12px;color:#166b49;opacity:.72}
+.bank-ui .notice{width:40px;height:40px;border:0;border-radius:50%;background:#fff;box-shadow:0 4px 18px #27382f14;position:relative}
+.bank-ui .notice svg{width:19px;stroke-width:2;color:#202421}
+.bank-ui .notice i{position:absolute;width:7px;height:7px;border-radius:50%;background:#d34b52;right:8px;top:8px;border:2px solid #fff}
+.bank-ui .main-content{padding:0 17px 25px}
+.bank-ui .feed-tabs{height:40px;margin:0 0 10px;padding:3px;border:0;border-radius:14px;background:#e8ece8}
+.bank-ui .feed-tabs button{font-size:13px;color:#737a75;border-radius:11px}
+.bank-ui .feed-tabs button.active{background:#fff;color:#176b49;box-shadow:0 4px 13px #1b352717}
+.bank-ui .hot-coins{height:151px;margin:0 0 25px;padding:17px 18px;border:0;border-radius:20px;background:#146b48;color:#fff;box-shadow:0 12px 26px #14583a2e;position:relative}
+.bank-ui .hot-coins:after{content:'';position:absolute;width:150px;height:150px;border:1px solid #ffffff12;border-radius:50%;right:-53px;top:-75px}
+.bank-ui .hot-coins h2{font-size:16px;line-height:1.35}
+.bank-ui .hot-coins p{font-size:11px;color:#cce0d6;margin:2px 0 13px}
+.bank-ui .hot-coins .coin-row{gap:10px;position:relative;z-index:1}
+.bank-ui .hot-coins .coin-badge{width:48px;height:48px;border:2px solid #ffffffd9;background:#fff}
+.bank-ui .hot-coins .coin-badge.bitcoin span{width:40px;height:40px;font-size:28px}
+.bank-ui .hot-coins .coin-badge.ethereum span{font-size:28px}
+.bank-ui .hot-coins .coin-badge.solana span{font-size:38px}
+.bank-ui .hot-coins .coin-badge.xrp span{font-size:34px}
+.bank-ui .hot-coins .coin-badge.cardano span{font-size:31px}
+.bank-ui .feed-card{padding:9px;margin-bottom:18px;border:0;border-radius:21px;background:#fff;box-shadow:0 8px 28px #2a3b3012}
+.bank-ui .feed-card:before{content:'최신 피드';display:block;margin:4px 4px 10px;color:#171a18;font-size:17px;font-weight:800}
+.bank-ui .feed-media{height:218px;border-radius:16px}
+.bank-ui .feed-copy{padding:13px 7px 5px}
+.bank-ui .post-text{color:#242824;font-size:15px;font-weight:700;line-height:1.52}
+.bank-ui .profile-dot{border-color:#fff;box-shadow:0 3px 10px #0004}
+.bank-ui .feed-actions{color:#8a918c;border-top:1px solid #edf0ed;margin-top:12px;padding-top:10px;height:38px}
+.bank-ui .bottom-nav{bottom:14px;left:50%;transform:translateX(-50%);width:min(calc(100% - 32px),373px);height:70px;border:0;border-radius:35px;background:#303330;box-shadow:0 12px 30px #1a261f35;overflow:visible;padding:0 12px}
+.bank-ui .bottom-nav button{color:#aeb3af;font-size:9px}
+.bank-ui .bottom-nav button.active{color:#d8ff87}
+.bank-ui .floating-compose{right:max(calc((100vw - 405px)/2 + 19px),19px);bottom:98px;width:54px;height:54px;background:#ccf570;color:#173620;box-shadow:0 8px 22px #27472d42;border:4px solid #f7f8f5}
+.bank-ui .placeholder{color:#818782}
+.bank-ui .placeholder span{color:#176b49}
+.bank-ui .empty-feed{color:#818782}
+.composer-layer{background:#f7f8f5}
+.composer{background:#f7f8f5;color:#171a18}
+.composer>header{border-color:#e1e5e1;background:#fff}
+.composer .publish{background:#176b49;color:#fff}
+.composer .publish:disabled{background:#dfe4df;color:#929993}
+.composer textarea{color:#171a18}
+.image-picker{border-color:#cdd5ce;background:#fff;color:#176b49}
+.required-title em{color:#176b49;background:#dcece3}
+.required-title span{color:#7f8781}
+.coin-search{border-color:#dfe4df;background:#fff}
+.coin-search input{color:#171a18}
+.coin-list{border-color:#e1e5e1}
+.coin-list>button{border-color:#e8ebe8;background:#fff;color:#171a18}
+.coin-list>button.selected{background:#e4f1e9}
+.coin-list>button>svg{color:#176b49}
 /* Feed-first density: keep navigation compact and give the post visual priority. */
 .main-content{padding:6px 12px 28px}
 .main-content .feed-tabs{height:42px;padding:2px;margin:0 3px 8px;border-radius:22px}
