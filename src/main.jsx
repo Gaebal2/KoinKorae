@@ -1,36 +1,30 @@
-import React, {useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import {createRoot} from 'react-dom/client';
-import {AlarmClock, CalendarDays, Heart, Home, Map, Menu, MessageCircle, Search, Settings, Share2} from 'lucide-react';
+import {AlarmClock, CalendarDays, Check, Heart, Home, ImagePlus, Map, Menu, MessageCircle, Plus, Search, Settings, Share2, X} from 'lucide-react';
+import cmcCoins from './cmc-top100.json';
 import './styles.css';
 
-const coinData = [
-  {id:'BTC', glyph:'₿', className:'bitcoin'},
-  {id:'ETH', glyph:'◆', className:'ethereum'},
-  {id:'SOL', glyph:'≋', className:'solana'},
-  {id:'XRP', glyph:'⌁', className:'xrp'},
-  {id:'ADA', glyph:'⠿', className:'cardano'},
-];
+const coinData=[{id:'BTC',glyph:'₿',className:'bitcoin'},{id:'ETH',glyph:'◆',className:'ethereum'},{id:'SOL',glyph:'≋',className:'solana'},{id:'XRP',glyph:'⌁',className:'xrp'},{id:'ADA',glyph:'⠿',className:'cardano'}];
+const coinColors=['#f7931a','#627eea','#26a17b','#2775ca','#14f195','#23292f','#345d9d','#2a5ada'];
 
 function Brand(){return <div className="brand" aria-label="코인고래"><span>ㅋ</span><span>ㅇ</span><span>ㄱ</span><span>ㄹ</span></div>}
-function CoinBadge({coin,small=false}){return <div className={`coin-badge ${coin.className} ${small?'small':''}`} aria-label={coin.id}><span>{coin.glyph}</span></div>}
-
+function CoinSymbol({symbol,small=false}){const known=coinData.find(c=>c.id===symbol);if(known)return <div className={`coin-badge ${known.className} ${small?'small':''}`}><span>{known.glyph}</span></div>;const color=coinColors[(symbol.charCodeAt(0)+symbol.length)%coinColors.length];return <div className={`coin-badge generic ${small?'small':''}`} style={{'--coin-color':color}}><span>{symbol.slice(0,4)}</span></div>}
 function Header(){return <header className="main-header"><button aria-label="메뉴"><Menu/></button><Brand/><div><button aria-label="검색"><Search/></button><button aria-label="설정"><Settings/></button></div></header>}
+function HotCoins(){return <section className="hot-coins"><h2>🔥 코인고래 불장 코인</h2><p>지금 호들러들이 가장 불장을 지지하는 코인</p><div className="coin-row">{coinData.map(coin=><CoinSymbol key={coin.id} symbol={coin.id}/>)}</div></section>}
 
-function HotCoins(){return <section className="hot-coins"><h2>🔥 코인고래 불장 코인</h2><p>지금 호들러들이 가장 불장을 지지하는 코인</p><div className="coin-row">{coinData.map(coin=><CoinBadge key={coin.id} coin={coin}/>)}</div></section>}
+function FeedCard({post}){const [liked,setLiked]=useState(false);return <article className="feed-card"><div className="feed-media"><img src={post.image} alt="피드 첨부"/><div className="profile-dot"><span>코</span></div><CoinSymbol symbol={post.coin} small/></div><div className="feed-copy"><p className="post-text">{post.text}</p><div className="feed-actions"><button><MessageCircle/><span>{post.comments||0}</span></button><button className={liked?'liked':''} onClick={()=>setLiked(!liked)}><Heart fill={liked?'currentColor':'none'}/><span>{(post.likes||0)+(liked?1:0)}</span></button><button><Share2/></button></div></div></article>}
 
-function FeedCard(){const [liked,setLiked]=useState(false);return <article className="feed-card"><div className="feed-media"><img src={`${import.meta.env.BASE_URL}cinema-feed.png`} alt="어두운 극장에서 영화를 기다리는 관객들"/><div className="profile-dot"><span>코</span></div><CoinBadge coin={coinData[0]} small/></div><div className="feed-copy"><h2>비트코인 앞으로 5년 안<br/>에 대박ㅋ</h2><p>ㅋㅋㅋㅋ<br/>ㅋㅋㅋㅋ<br/>ㅋㅋ<br/>ㅋㅋㅋㅋㅋㅋzzz<br/>zzzzzzzz<br/>zzzzzzㅋ<br/>ㅋㅋㅋ<br/>ㅋㅋㅋㅋ...</p><div className="feed-actions"><button><MessageCircle/><span>12,456</span></button><button className={liked?'liked':''} onClick={()=>setLiked(!liked)}><Heart fill={liked?'currentColor':'none'}/><span>{liked?'60':'59'}</span></button><button><Share2/></button></div></div></article>}
+function Composer({onClose,onPublish}){
+  const [text,setText]=useState('');const [coin,setCoin]=useState(null);const [query,setQuery]=useState('');const [image,setImage]=useState(null);const fileRef=useRef(null);
+  const results=useMemo(()=>cmcCoins.filter(c=>`${c.name} ${c.symbol}`.toLowerCase().includes(query.toLowerCase())).slice(0,query?100:20),[query]);
+  const chooseImage=e=>{const file=e.target.files?.[0];if(file)setImage({file,url:URL.createObjectURL(file)})};
+  const publish=()=>{if(!text.trim()||!coin||!image)return;onPublish({id:Date.now(),text:text.trim(),coin:coin.symbol,image:image.url,likes:0,comments:0});onClose()};
+  return <div className="composer-layer"><section className="composer"><header><button onClick={onClose} aria-label="닫기"><X/></button><strong>피드 쓰기</strong><button className="publish" disabled={!text.trim()||!coin||!image} onClick={publish}>게시</button></header><div className="composer-body"><textarea autoFocus value={text} onChange={e=>setText(e.target.value)} maxLength={500} placeholder="무슨 일이 일어나고 있나요?"/>{image?<div className="image-preview"><img src={image.url} alt="업로드 미리보기"/><button onClick={()=>setImage(null)}><X/></button></div>:<button className="image-picker" onClick={()=>fileRef.current?.click()}><ImagePlus/><span>이미지 추가</span></button>}<input ref={fileRef} type="file" accept="image/*" hidden onChange={chooseImage}/><div className="required-title"><div><b>코인 선택 <em>필수</em></b><span>CoinMarketCap 시가총액 1~100위</span></div>{coin&&<CoinSymbol symbol={coin.symbol}/>}</div><label className="coin-search"><Search/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="코인명 또는 심볼 검색"/></label><div className="coin-list">{results.map(c=><button key={c.id} className={coin?.id===c.id?'selected':''} onClick={()=>setCoin(c)}><span className="rank-num">{c.cmcRank}</span><CoinSymbol symbol={c.symbol}/><span><b>{c.name}</b><small>{c.symbol}</small></span>{coin?.id===c.id&&<Check/>}</button>)}</div></div></section></div>
+}
 
-function MainFeed(){const [tab,setTab]=useState('user');return <><Header/><main className="main-content"><div className="feed-tabs"><button className={tab==='user'?'active':''} onClick={()=>setTab('user')}>유저피드</button><button className={tab==='coin'?'active':''} onClick={()=>setTab('coin')}>코인피드</button></div>{tab==='user'?<><HotCoins/><FeedCard/></>:<div className="empty-feed"><span>₿</span><h2>코인 피드</h2><p>코인별 인기 게시물이 곧 표시됩니다.</p></div>}</main></>}
-
-const navItems=[
-  {id:'home',label:'홈',Icon:Home},
-  {id:'map',label:'지도화면',Icon:Map},
-  {id:'check',label:'출석체크',Icon:CalendarDays},
-  {id:'alarm',label:'알람',Icon:AlarmClock},
-  {id:'chat',label:'채팅',Icon:MessageCircle},
-];
-
-function App(){const [page,setPage]=useState('home');return <div className="app-shell">{page==='home'?<MainFeed/>:<><Header/><main className="placeholder"><span>{navItems.find(item=>item.id===page)?.label}</span><p>이 화면은 다음 단계에서 구현합니다.</p></main></>}<nav className="bottom-nav">{navItems.map(({id,label,Icon})=><button key={id} className={page===id?'active':''} onClick={()=>setPage(id)}><Icon fill={id==='home'&&page===id?'currentColor':'none'}/><span>{label}</span></button>)}</nav></div>}
-
+function MainFeed({posts}){const [tab,setTab]=useState('user');return <><Header/><main className="main-content"><div className="feed-tabs"><button className={tab==='user'?'active':''} onClick={()=>setTab('user')}>유저피드</button><button className={tab==='coin'?'active':''} onClick={()=>setTab('coin')}>코인피드</button></div>{tab==='user'?<><HotCoins/>{posts.map(post=><FeedCard key={post.id} post={post}/>)}</>:<div className="empty-feed"><span>₿</span><h2>코인 피드</h2><p>코인별 인기 게시물이 곧 표시됩니다.</p></div>}</main></>}
+const navItems=[{id:'home',label:'홈',Icon:Home},{id:'map',label:'지도화면',Icon:Map},{id:'check',label:'출석체크',Icon:CalendarDays},{id:'alarm',label:'알람',Icon:AlarmClock},{id:'chat',label:'채팅',Icon:MessageCircle}];
+const initialPost={id:1,text:'비트코인 앞으로 5년 안\n에 대박ㅋ\nㅋㅋㅋㅋ\nㅋㅋㅋㅋ\nㅋㅋ\nㅋㅋㅋㅋㅋㅋzzz\nzzzzzzzz\nzzzzzzㅋ\nㅋㅋㅋ\nㅋㅋㅋㅋ...',coin:'BTC',image:`${import.meta.env.BASE_URL}cinema-feed.png`,comments:12456,likes:59};
+function App(){const [page,setPage]=useState('home');const [writing,setWriting]=useState(false);const [posts,setPosts]=useState([initialPost]);return <div className="app-shell">{page==='home'?<MainFeed posts={posts}/>:<><Header/><main className="placeholder"><span>{navItems.find(item=>item.id===page)?.label}</span><p>이 화면은 다음 단계에서 구현합니다.</p></main></>}<button className="floating-compose" onClick={()=>setWriting(true)} aria-label="피드 쓰기"><Plus/></button><nav className="bottom-nav">{navItems.map(({id,label,Icon})=><button key={id} className={page===id?'active':''} onClick={()=>setPage(id)}><Icon fill={id==='home'&&page===id?'currentColor':'none'}/><span>{label}</span></button>)}</nav>{writing&&<Composer onClose={()=>setWriting(false)} onPublish={post=>{setPosts(p=>[post,...p]);setPage('home')}}/>}</div>}
 createRoot(document.getElementById('root')).render(<App/>);
-if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`));
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`));
