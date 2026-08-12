@@ -1,0 +1,10 @@
+{
+  "name": "Koin Korae",
+  "short_name": "Korae",
+  "description": "코인 커뮤니티와 게임, P2P 마켓",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#080a0d",
+  "theme_color": "#080a0d",
+  "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
