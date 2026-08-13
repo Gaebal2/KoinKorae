@@ -99,6 +99,28 @@ const seedPosts = [
     tone: "slate",
     image: asset("koin-korae-icon-source.png"),
   },
+  ...cmcCoins.slice(0, 10).flatMap((coin, coinIndex) =>
+    [
+      "커뮤니티에서 주목하는 핵심 소식과 최근 생태계 변화를 함께 살펴봅니다.",
+      "장기 보유자 관점에서 이번 주 흐름과 앞으로 확인할 지표를 정리했습니다.",
+      "처음 접하는 사용자도 이해하기 쉽도록 주요 특징과 활용 사례를 공유합니다.",
+      "개발과 커뮤니티 활동이 꾸준히 이어지는지 함께 의견을 나눠 보고 싶습니다.",
+      "이 코인을 지지하는 이유와 반대 의견을 자유롭게 배틀로 남겨 주세요.",
+    ].map((content, feedIndex) => ({
+      id: 1000 + coinIndex * 10 + feedIndex,
+      author: `${coin.symbol.toLowerCase()}_hodler_${feedIndex + 1}`,
+      initials: coin.symbol.slice(0, 2),
+      coin: coin.symbol,
+      age: `${coinIndex + feedIndex + 1}시간`,
+      content: `${coin.name}(${coin.symbol}) — ${content}`,
+      support: (10 - coinIndex) * 1000 + (5 - feedIndex) * 75,
+      oppose: 80 + coinIndex * 14 + feedIndex * 19,
+      comments: 12 + coinIndex * 3 + feedIndex * 4,
+      reposts: 4 + coinIndex + feedIndex * 2,
+      tone: ["orange", "blue", "purple", "slate", "green"][feedIndex],
+      image: feedIndex === 0 ? asset("cinema-feed.png") : "",
+    })),
+  ),
 ];
 const seedPins = [
   {
@@ -266,13 +288,14 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
   const [comment, setComment] = useState("");
   const sorted = useMemo(
     () =>
-      [...posts].sort((a, b) =>
-        category === "논쟁"
+      [...posts].sort((a, b) => {
+        if (a.isFresh !== b.isFresh) return a.isFresh ? -1 : 1;
+        return category === "논쟁"
           ? b.support + b.oppose - (a.support + a.oppose)
           : category === "최신"
             ? b.id - a.id
-            : exposure(b) - exposure(a),
-      ),
+            : exposure(b) - exposure(a);
+      }),
     [posts, category],
   );
   const groups = useMemo(
@@ -288,6 +311,10 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
           a[1].reduce((s, p) => s + exposure(p), 0),
       ),
     [posts],
+  );
+  const coinRanks = useMemo(
+    () => new Map(groups.map(([coin], index) => [coin, index + 1])),
+    [groups],
   );
   const updateScore = (id, type, score) =>
     setPosts((ps) =>
@@ -322,11 +349,11 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
         </div>
         {feed === "유저 피드" ? (
           <div className="feed">
-            {sorted.map((p, i) => (
+            {sorted.map((p) => (
               <PostCard
                 key={p.id}
                 post={p}
-                rank={i + 1}
+                rank={coinRanks.get(p.coin)}
                 onBattle={setBattle}
                 onComment={setCommentPost}
                 onRepost={repost}
@@ -416,8 +443,8 @@ function CoinFeed({ groups, ...actions }) {
               {open[coin] ? <ChevronUp /> : <ChevronDown />}
             </button>
             {open[coin] &&
-              items.map((p, n) => (
-                <PostCard key={p.id} post={p} rank={n + 1} {...actions} />
+              items.map((p) => (
+                <PostCard key={p.id} post={p} rank={i + 1} {...actions} />
               ))}
           </section>
         );
@@ -979,6 +1006,7 @@ function Composer({ onClose, onPublish }) {
             reposts: 0,
             tone: "green",
             image,
+            isFresh: true,
           })
         }
       >
