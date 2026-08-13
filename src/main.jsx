@@ -172,7 +172,8 @@ function Coin({ symbol, size = "md" }) {
       className={`coin coin-${size}`}
       style={{ "--coin": coinColor(symbol) }}
     >
-      {symbol.slice(0, 4)}
+      <span className="coin-fallback">{symbol.slice(0, 4)}</span>
+      <img src={asset(`coin-icons/${symbol.toLowerCase()}.svg`)} alt={`${symbol} 아이콘`} onError={event=>{event.currentTarget.style.display="none"}} />
     </span>
   );
 }
