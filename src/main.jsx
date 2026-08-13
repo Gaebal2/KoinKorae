@@ -285,17 +285,6 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose }) {
   return (
     <>
       <main>
-        <div className="hero">
-          <div>
-            <span>커뮤니티가 만드는 순위</span>
-            <h1>
-              숨겨진 알고리즘 없이
-              <br />
-              참여로 노출을 결정하세요.
-            </h1>
-          </div>
-          <Trophy />
-        </div>
         <Segments
           items={["유저 피드", "코인 피드"]}
           value={feed}
@@ -499,6 +488,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
     layerRef = useRef(null);
   const [editing, setEditing] = useState(false),
     [selected, setSelected] = useState(null),
+    [imageOpen, setImageOpen] = useState(false),
     [center, setCenter] = useState({ lat: 37.5665, lng: 126.978 });
   const limit = lifetime >= 10000 ? 3 : lifetime >= 1000 ? 2 : 1;
   const mine = pins.filter((p) => p.owner).length;
@@ -566,7 +556,9 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
       {selected && (
         <div className="pin-detail">
           {selected.image && (
-            <img className="pin-detail-photo" src={selected.image} alt="핀 등록 사진" />
+            <button className="pin-detail-photo-button" onClick={() => setImageOpen(true)} aria-label="사진 전체 화면으로 보기">
+              <img className="pin-detail-photo" src={selected.image} alt="핀 등록 사진" />
+            </button>
           )}
           <div className="pin-detail-content">
             <div className="pin-creator">
@@ -581,7 +573,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
             <p>{selected.description}</p>
             {selected.link && (
               <a href={selected.link} target="_blank" rel="noreferrer">
-                링크 열기
+                {selected.link}
               </a>
             )}
           </div>
@@ -612,6 +604,12 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
             setEditing(false);
           }}
         />
+      )}
+      {imageOpen && selected?.image && (
+        <div className="image-lightbox" role="dialog" aria-modal="true" onClick={() => setImageOpen(false)}>
+          <button aria-label="전체 화면 이미지 닫기" onClick={() => setImageOpen(false)}><X /></button>
+          <img src={selected.image} alt="핀 등록 사진 전체 화면" onClick={(event) => event.stopPropagation()} />
+        </div>
       )}
     </main>
   );
