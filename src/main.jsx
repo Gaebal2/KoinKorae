@@ -74,8 +74,8 @@ const seedPosts = [
   },
   {
     id: 4,
-    author: "xrpulse",
-    initials: "XP",
+    author: "battle_newbie",
+    initials: "ME",
     coin: "XRP",
     age: "3시간",
     content:
@@ -167,14 +167,12 @@ function Coin({ symbol, size = "md" }) {
     </span>
   );
 }
-function Header({ bp }) {
+function Header({ bp, onProfile }) {
   return (
     <header className="topbar">
       <div className="logo">
-        <span>BF</span>
-        <div>
-          BattleFeed<small>POWERED BY PEOPLE</small>
-        </div>
+        <button className="header-profile" onClick={onProfile} aria-label="내 프로필로 이동"><img src={asset("koin-korae-app-icon.png")} alt="내 프로필" /></button>
+        <div>ㅋㅇㄱㄹ<small>POWERED BY PEOPLE</small></div>
       </div>
       <div className="bp-pill">
         <Zap /> <b>{bp}</b> BP
@@ -839,30 +837,19 @@ function CheckinPage({ bp, setBp, lifetime, setLifetime }) {
     </main>
   );
 }
-function ProfilePage({ posts, bp, lifetime }) {
-  const [tab, setTab] = useState("게시물");
+function ProfilePage({ posts, pins, bp, lifetime }) {
+  const [view, setView] = useState("프로필");
   const tier =
     lifetime >= 10000 ? "Gold" : lifetime >= 1000 ? "Silver" : "Bronze";
+  const people={팔로워:['coinlover','eth_builder','mapmaker'],팔로잉:['blockwhale','sol_runner'],친구:['ethernaut','xrpulse']};
+  if(view!=="프로필") return <main className="profile-subpage"><button className="profile-back" onClick={()=>setView("프로필")}>← 내 프로필</button><h1>{view}</h1>{people[view]?<div className="people-list">{people[view].map((name,i)=><div key={name}><img src={asset("koin-korae-app-icon.png")} alt=""/><span><b>@{name}</b><small>{i%2?'함께 성장하는 커뮤니티 멤버':'코인과 기술 이야기를 나눕니다'}</small></span><button>{view==='친구'?'친구':'팔로우'}</button></div>)}</div>:view==='PIN'?<div className="profile-pin-list">{pins.filter(p=>p.owner).length?pins.filter(p=>p.owner).map(p=><div key={p.id}><Coin symbol={p.coin}/><span><b>{p.title}</b><small>{p.description}</small></span></div>):<Empty text="생성한 PIN이 없습니다"/>}</div>:<div className="profile-comments"><div><b>블록체인 스터디</b><p>초보자도 함께할 수 있어서 기대됩니다!</p></div><div><b>퍼블릭 굿즈에 대한 제안</b><p>지속 가능한 참여 방식에 공감합니다.</p></div></div>}</main>;
   return (
-    <main>
+    <main className="profile-page-x">
       <section className="profile-head">
-        <span className="profile-avatar">ME</span>
+        <img className="profile-avatar" src={asset("koin-korae-app-icon.png")} alt="내 프로필" />
         <h1>@battle_newbie</h1>
         <p>투명한 피드와 열린 커뮤니티를 응원합니다.</p>
-        <div className="profile-stats">
-          <div>
-            <b>{posts.length}</b>
-            <span>게시물</span>
-          </div>
-          <div>
-            <b>{bp}</b>
-            <span>현재 BP</span>
-          </div>
-          <div>
-            <b>{lifetime}</b>
-            <span>Lifetime BP</span>
-          </div>
-        </div>
+        <div className="profile-social"><button onClick={()=>setView('팔로워')}><b>128</b> 팔로워</button><button onClick={()=>setView('팔로잉')}><b>64</b> 팔로잉</button></div>
       </section>
       <section className="tier-card">
         <Trophy />
@@ -876,45 +863,13 @@ function ProfilePage({ posts, bp, lifetime }) {
         </div>
         <i style={{ width: `${Math.min(100, lifetime / 10)}%` }} />
       </section>
-      <Segments
-        items={["게시물", "리포스트", "활동"]}
-        value={tab}
-        onChange={setTab}
-      />
-      {tab === "게시물" ? (
-        <div className="empty-state">
-          <BarChart3 />
-          <h3>아직 작성한 게시물이 없습니다</h3>
-          <p>첫 의견을 커뮤니티와 나눠보세요.</p>
-        </div>
-      ) : tab === "리포스트" ? (
-        <div className="empty-state">
-          <Repeat2 />
-          <h3>리포스트가 여기에 표시됩니다</h3>
-          <p>리포스트는 글로벌 순위에 포함되지 않습니다.</p>
-        </div>
-      ) : (
-        <div className="activity-list">
-          <div>
-            <Swords />
-            <span>총 배틀 참여</span>
-            <b>12회</b>
-          </div>
-          <div>
-            <Zap />
-            <span>Lifetime BP</span>
-            <b>{lifetime}</b>
-          </div>
-          <div>
-            <MapPin />
-            <span>지도 핀</span>
-            <b>1개</b>
-          </div>
-        </div>
-      )}
+      <div className="profile-links"><button onClick={()=>setView('친구')}>친구목록</button><button onClick={()=>setView('PIN')}>PIN</button><button onClick={()=>setView('댓글')}>댓글</button></div>
+      <h2 className="profile-feed-title">내 Feed</h2>
+      <div className="feed">{posts.length?posts.map((p,i)=><PostCard key={p.id} post={p} rank={i+1} onBattle={()=>{}} onComment={()=>{}} onRepost={()=>{}}/>):<Empty text="아직 작성한 Feed가 없습니다"/>}</div>
     </main>
   );
 }
+function Empty({text}){return <div className="empty-state"><BarChart3/><h3>{text}</h3></div>}
 function Composer({ onClose, onPublish }) {
   const [content, setContent] = useState(""),
     [coin, setCoin] = useState("BTC"),
@@ -1041,7 +996,7 @@ function App() {
   };
   return (
     <div className={`app-shell ${page === "map" ? "map-active" : ""}`}>
-      <Header bp={bp} />
+      <Header bp={bp} onProfile={()=>setPage("profile")} />
       {page === "home" && (
         <HomePage
           posts={posts}
@@ -1071,6 +1026,7 @@ function App() {
       {page === "profile" && (
         <ProfilePage
           posts={posts.filter((p) => p.author === "battle_newbie")}
+          pins={pins}
           bp={bp}
           lifetime={lifetime}
         />
