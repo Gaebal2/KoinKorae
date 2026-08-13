@@ -171,7 +171,7 @@ function Header({ bp, onProfile }) {
   return (
     <header className="topbar">
       <div className="logo">
-        <button className="header-profile" onClick={onProfile} aria-label="내 프로필로 이동"><img src={asset("koin-korae-app-icon.png")} alt="내 프로필" /></button>
+        <button className="header-profile" onClick={onProfile} aria-label="내 프로필로 이동"><img src={asset("koin-korae-app-icon-blue-v2.png")} alt="내 프로필" /></button>
         <div>ㅋㅇㄱㄹ<small>POWERED BY PEOPLE</small></div>
       </div>
       <div className="bp-pill">
@@ -574,7 +574,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
           <div className="pin-detail-content">
             <div className="pin-creator">
               <Coin symbol={selected.coin} size="sm" />
-              <img src={selected.creatorImage || asset("icon-192.png")} alt="핀 생성자 프로필" />
+              <img src={selected.creatorImage || asset("koin-korae-app-icon-blue-v2.png")} alt="핀 생성자 프로필" />
               <span>@{selected.creator || "battle_newbie"}</span>
             </div>
             <small>
@@ -609,7 +609,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
           onSave={(p) => {
             setPins((ps) => [
               ...ps,
-              { ...p, id: Date.now(), owner: true, category: "커뮤니티", creator: "battle_newbie", creatorImage: asset("icon-192.png") },
+              { ...p, id: Date.now(), owner: true, category: "커뮤니티", creator: "battle_newbie", creatorImage: asset("koin-korae-app-icon-blue-v2.png") },
             ]);
             setBp((v) => v - 1);
             closePinForm();
@@ -846,7 +846,7 @@ function ProfilePage({ posts, pins, bp, lifetime }) {
   return (
     <main className="profile-page-x">
       <section className="profile-head">
-        <img className="profile-avatar" src={asset("koin-korae-app-icon.png")} alt="내 프로필" />
+        <img className="profile-avatar" src={asset("koin-korae-app-icon-blue-v2.png")} alt="내 프로필" />
         <h1>@battle_newbie</h1>
         <p>투명한 피드와 열린 커뮤니티를 응원합니다.</p>
         <div className="profile-social"><button onClick={()=>setView('팔로워')}><b>128</b> 팔로워</button><button onClick={()=>setView('팔로잉')}><b>64</b> 팔로잉</button></div>

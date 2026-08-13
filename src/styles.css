@@ -1103,3 +1103,36 @@ button:disabled {
   .modal.pin-form-modal { border-radius: 0; }
   .modal.composer-modal { border-radius: 0; }
 }
+
+/* Ocean blue brand theme */
+:root { --green: #075ea8; --ocean: #075ea8; --ocean-deep: #073b73; --aqua: #64dde3; }
+body { background: #dcebf5; }
+.app-shell { background: #f3f8fc; box-shadow: 0 0 50px #073b7324; }
+.topbar { background: #f3f8fce8; border-bottom-color: #dce8f1; }
+.logo small,.page-title p,.profile-head p { color: #718898; }
+.bp-pill { background: #dff4f6; color: #075ea8; }
+.bp-pill svg { fill: #22b8c4; }
+.segments { background: #e2edf5; }
+.segments button.active { color: #075ea8; }
+.segments.compact button.active,.composer .publish { background: #075ea8; border-color: #075ea8; }
+.filters .filter-divider { background: #cfdee9; }
+.battle-btn,.reward-row button { background: #dff5f6 !important; color: #075b79 !important; }
+.fab,.map-toolbar button,.primary { background: #075ea8; }
+.fab { box-shadow: 0 9px 22px #075ea845; }
+.bottom-nav,.map-active .bottom-nav { background: #073b73d9; }
+.bottom-nav button.active { color: #64dde3; }
+.bottom-nav button { color: #a8c1d3; }
+.page-title > span,.calendar-mark { background: #dff1f8; color: #075ea8; }
+.balance-card { background: linear-gradient(135deg,#073b73,#075ea8); }
+.tier-card { background: #073b73; }
+.tier-card > svg,.tier-card i { color: #64dde3; background: #64dde3; }
+.profile-links button,.profile-back,.pin-detail a { color: #075ea8; }
+.profile-links button { border-color: #cddfea; }
+.coin-group-head { background: #e8f1f7; }
+.pin-location { background: #e2f2f8; }
+.pin-location > svg { color: #075ea8; }
+.trade-coins button.selected { border-color: #0a84c6; background: #e1f4fa; color: #075ea8; }
+.search:focus-within,.modal textarea:focus,.field input:focus { border-color: #0a84c6; }
+.notice-box,.center-coordinate { color: #6e8594; }
+.profile-social b,.post-body { color: #15334a; }
+.people-list button { background: #dff3f7; color: #075b79; }
