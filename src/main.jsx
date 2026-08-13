@@ -169,6 +169,32 @@ const seedPins = [
     creator: "sol_runner",
     creatorImage: profileImage("sol_runner"),
   },
+  ...[
+    ["BTC 결제 카페", "BTC", ["BTC", "USDT"], 37.5752, 126.9901, "btc_hodler_1", "비즈니스"],
+    ["이더리움 개발자 모임", "ETH", ["ETH", "USDC"], 37.5584, 126.9956, "eth_hodler_2", "커뮤니티"],
+    ["솔라나 NFT 전시", "SOL", ["SOL", "USDC"], 37.5791, 126.9682, "sol_hodler_3", "이벤트"],
+    ["XRP 해외송금 상담", "XRP", ["XRP", "USDT"], 37.5518, 126.9875, "xrp_hodler_1", "서비스"],
+    ["BNB 트레이더 라운지", "BNB", ["BNB", "USDT"], 37.5651, 127.0034, "bnb_hodler_4", "커뮤니티"],
+    ["USDT 가능 편집숍", "USDT", ["USDT", "USDC"], 37.5843, 126.9811, "usdt_hodler_2", "판매"],
+    ["USDC 크리에이터 마켓", "USDC", ["USDC", "ETH"], 37.5467, 126.9763, "usdc_hodler_5", "마켓"],
+    ["TRON 밋업 스팟", "TRX", ["TRX", "USDT"], 37.5712, 127.0112, "trx_hodler_1", "이벤트"],
+    ["HYPE 커뮤니티 데스크", "HYPE", ["HYPE", "USDC"], 37.5607, 126.9615, "hype_hodler_3", "커뮤니티"],
+    ["DOGE 굿즈 플리마켓", "DOGE", ["DOGE", "USDT"], 37.5874, 126.9992, "doge_hodler_2", "판매"],
+  ].map(([title, coin, tradeCoins, lat, lng, creator, category], index) => ({
+    id: 10 + index,
+    title,
+    description: `${coin} 커뮤니티 사용자를 위한 테스트 PIN입니다. 거래와 모임 정보를 확인해 보세요.`,
+    coin,
+    tradeCoins,
+    link: "",
+    category,
+    lat,
+    lng,
+    owner: false,
+    image: index % 3 === 0 ? asset("cinema-feed.png") : "",
+    creator,
+    creatorImage: profileImage(creator),
+  })),
 ];
 const windows = ["오늘", "이번 달", "올해", "전체"];
 const categories = ["노출", "논쟁", "급상승", "최신", "팔로잉"];
@@ -183,6 +209,17 @@ const fmt = (n) =>
     notation: Math.abs(n) > 999 ? "compact" : "standard",
   }).format(n);
 const exposure = (p) => p.support - p.oppose;
+const buildCoinRanks = (posts) => {
+  const totals = posts.reduce((scores, post) => {
+    scores[post.coin] = (scores[post.coin] || 0) + exposure(post);
+    return scores;
+  }, {});
+  return new globalThis.Map(
+    Object.entries(totals)
+      .sort((a, b) => b[1] - a[1])
+      .map(([coin], index) => [coin, index + 1]),
+  );
+};
 const coinColor = (s) =>
   ({
     BTC: "#f59e0b",
@@ -313,8 +350,8 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
     [posts],
   );
   const coinRanks = useMemo(
-    () => new globalThis.Map(groups.map(([coin], index) => [coin, index + 1])),
-    [groups],
+    () => buildCoinRanks(posts),
+    [posts],
   );
   const updateScore = (id, type, score) =>
     setPosts((ps) =>
@@ -880,7 +917,7 @@ function CheckinPage({ bp, setBp, lifetime, setLifetime }) {
     </main>
   );
 }
-function ProfilePage({ posts, setPosts, pins, bp, setBp, lifetime, username }) {
+function ProfilePage({ posts, setPosts, pins, bp, setBp, lifetime, username, coinRanks }) {
   const [view, setView] = useState("프로필");
   const [battle,setBattle]=useState(null);
   const isMe=username==="battle_newbie";
@@ -912,7 +949,7 @@ function ProfilePage({ posts, setPosts, pins, bp, setBp, lifetime, username }) {
       </section>
       {isMe&&<div className="profile-links"><button onClick={()=>setView('친구')}>친구목록</button><button onClick={()=>setView('PIN')}>PIN</button><button onClick={()=>setView('댓글')}>댓글</button></div>}
       <h2 className="profile-feed-title">내 Feed</h2>
-      <div className="feed">{posts.length?posts.map((p,i)=><PostCard key={p.id} post={p} rank={i+1} onBattle={setBattle} onComment={()=>{}} onRepost={()=>{}}/>):<Empty text="아직 작성한 Feed가 없습니다"/>}</div>
+      <div className="feed">{posts.length?posts.map((p)=><PostCard key={p.id} post={p} rank={coinRanks.get(p.coin)} onBattle={setBattle} onComment={()=>{}} onRepost={()=>{}}/>):<Empty text="아직 작성한 Feed가 없습니다"/>}</div>
       {battle&&<BattleModal post={battle} bp={bp} onClose={()=>setBattle(null)} onFinish={(type,score)=>{setBp(v=>v-1);setPosts(all=>all.map(p=>p.id===battle.id?{...p,[type]:p[type]+score}:p));setBattle(null)}}/>}
     </main>
   );
@@ -1059,6 +1096,7 @@ function App() {
     [lifetime, setLifetime] = useState(680),
     [compose, setCompose] = useState(false),
     [profileUser,setProfileUser]=useState("battle_newbie");
+  const coinRanks = useMemo(() => buildCoinRanks(posts), [posts]);
   const openProfile=(username="battle_newbie")=>{setProfileUser(username);setPage("profile")};
   useEffect(() => {
     if (!compose) return;
@@ -1111,6 +1149,7 @@ function App() {
           setBp={setBp}
           lifetime={lifetime}
           username={profileUser}
+          coinRanks={coinRanks}
         />
       )}
       <nav className="bottom-nav">
