@@ -11,8 +11,8 @@ import {
   ImagePlus,
   Map,
   MapPin,
+  MapPinPlus,
   MessageCircle,
-  Plus,
   Repeat2,
   Search,
   Shield,
@@ -343,8 +343,8 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
             onProfile={onProfile}
           />
         )}
-        <button className="fab" onClick={onCompose}>
-          <SquarePen />피드 작성
+        <button className="fab" onClick={onCompose} aria-label="새 피드 작성" title="새 피드 작성">
+          <SquarePen aria-hidden="true" />
         </button>
       </main>
       {battle && (
@@ -574,8 +574,10 @@ function MapPage({ pins, setPins, lifetime, bp, setBp, onProfile }) {
         <button
           disabled={mine >= limit || bp < 1}
           onClick={() => setEditing(true)}
+          aria-label="지도 위에 핀 추가"
+          title="지도 위에 핀 추가"
         >
-          <Plus />핀 만들기
+          <MapPinPlus aria-hidden="true" />
         </button>
       </div>
       {selected && (
