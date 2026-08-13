@@ -139,6 +139,8 @@ main {
   padding: 3px;
   margin: 13px 0 10px;
 }
+.home-page { padding-top: 4px; }
+.home-page > .segments:first-child { margin-top: 0; }
 .segments button {
   min-height: 38px;
   border: 0;
@@ -769,8 +771,7 @@ button:disabled {
   margin: 1px;
 }
 .pin-detail-content > p { width: 100%; overflow-wrap: anywhere; word-break: break-word; }
-.pin-detail > .pin-delete { position: absolute; z-index: 2; right: -7px; top: -7px; width: 27px; height: 27px; border: 2px solid white; background: #314039; color: white; border-radius: 50%; padding: 0; display: grid; place-items: center; box-shadow: 0 3px 10px #15231b45; }
-.pin-delete svg { width: 14px; height: 14px; stroke-width: 2.6; }
+.pin-detail > .pin-delete { position: absolute; z-index: 2; right: -6px; top: -8px; width: auto; height: 27px; border: 2px solid white; background: #314039; color: white; border-radius: 14px; padding: 0 9px; display: grid; place-items: center; box-shadow: 0 3px 10px #15231b45; font-size: 9px; font-weight: 800; }
 .pin-detail a { display: block; max-width: 100%; font-size: 9px; color: #176b49; font-weight: 700; overflow-wrap: anywhere; word-break: break-all; }
 .app-shell.map-active { padding-bottom: 0; overflow: hidden; }
 .map-active .bottom-nav { background: #2c312ecc; border: 1px solid #ffffff1f; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }

@@ -286,7 +286,7 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose }) {
     );
   return (
     <>
-      <main>
+      <main className="home-page">
         <Segments
           items={["유저 피드", "코인 피드"]}
           value={feed}
@@ -377,7 +377,7 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose }) {
   );
 }
 function CoinFeed({ groups, ...actions }) {
-  const [closed, setClosed] = useState({});
+  const [open, setOpen] = useState({});
   return (
     <div>
       {groups.map(([coin, items], i) => {
@@ -386,7 +386,7 @@ function CoinFeed({ groups, ...actions }) {
           <section className="coin-group" key={coin}>
             <button
               className="coin-group-head"
-              onClick={() => setClosed((c) => ({ ...c, [coin]: !c[coin] }))}
+              onClick={() => setOpen((current) => ({ ...current, [coin]: !current[coin] }))}
             >
               <Coin symbol={coin} />
               <div>
@@ -398,9 +398,9 @@ function CoinFeed({ groups, ...actions }) {
                   {fmt(score)}
                 </small>
               </div>
-              {closed[coin] ? <ChevronDown /> : <ChevronUp />}
+              {open[coin] ? <ChevronUp /> : <ChevronDown />}
             </button>
-            {!closed[coin] &&
+            {open[coin] &&
               items.map((p, n) => (
                 <PostCard key={p.id} post={p} rank={n + 1} {...actions} />
               ))}
@@ -599,7 +599,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
                 setSelected(null);
               }}
             >
-              <X />
+              삭제
             </button>
           )}
         </div>
