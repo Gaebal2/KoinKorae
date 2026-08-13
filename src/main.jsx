@@ -441,6 +441,10 @@ function BattleModal({ post, bp, onClose, onFinish }) {
       {phase === "choose" ? (
         <>
           <p className="center">어느 쪽에서 배틀하시겠어요?</p>
+          <div className="battle-explain">
+            <span><Shield />지지하면 이 Feed의 노출 점수가 증가합니다.</span>
+            <span><Swords />반대하면 이 Feed의 노출 점수가 감소합니다.</span>
+          </div>
           <div className="side-choice">
             <button disabled={bp < 1} onClick={() => start("support")}>
               <Shield />

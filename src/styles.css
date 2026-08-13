@@ -1136,3 +1136,19 @@ body { background: #dcebf5; }
 .notice-box,.center-coordinate { color: #6e8594; }
 .profile-social b,.post-body { color: #15334a; }
 .people-list button { background: #dff3f7; color: #075b79; }
+.battle-explain { display: grid; gap: 7px; margin: -12px 0 15px; }
+.battle-explain span { min-height: 34px; display: flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+.battle-explain span:first-child { background: #dff5f6; color: #075b79; }
+.battle-explain span:last-child { background: #fde8e8; color: #aa4650; }
+.battle-explain svg { width: 15px; height: 15px; flex: none; }
+.side-choice button:first-child { color: #075ea8; background: #e3f5fa; border-color: #b9e1ee; }
+.side-choice button:last-child { color: #ad4a52; background: #fff7f7; border-color: #f0d3d5; }
+.battle-meter { background: #f5dfe2; }
+.battle-meter i { background: #cdeff3; }
+.battle-meter span { color: #36576c; }
+.score-row strong { color: #075ea8; }
+.tone-green { background: #0a84c6; }
+.tap-target { border-color: #cceff3; background: #64dde3; color: #073b73; box-shadow: 0 8px 0 #159ca8; }
+.minigame > svg,.calendar-mark svg { color: #17aabd; }
+.pin-photo-picker { border-color: #a9d5e4; background: #eef8fc; color: #075ea8; }
+.profile-avatar { background: linear-gradient(145deg,#073b73,#0a84c6); }
