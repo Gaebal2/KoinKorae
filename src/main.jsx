@@ -649,7 +649,7 @@ function PinForm({ center, onClose, onSave }) {
     reader.readAsDataURL(file);
   };
   return (
-    <Modal title="새 지도 핀" onClose={onClose}>
+    <Modal title="지도위에 핀 추가" onClose={onClose} className="pin-form-modal">
       <div className="pin-location">
         <MapPin />
         <div>
@@ -972,10 +972,10 @@ function Composer({ onClose, onPublish }) {
     </Modal>
   );
 }
-function Modal({ title, onClose, children }) {
+function Modal({ title, onClose, children, className = "" }) {
   return (
     <div className="overlay">
-      <section className="modal">
+      <section className={`modal ${className}`}>
         <header>
           <b>{title}</b>
           <button onClick={onClose} aria-label="닫기">

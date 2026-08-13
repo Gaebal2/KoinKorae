@@ -465,6 +465,8 @@ main {
   overflow: auto;
   max-height: calc(92dvh - 57px);
 }
+.modal.pin-form-modal { height: 100dvh; max-height: 100dvh; border-radius: 0; }
+.pin-form-modal .modal-body { max-height: calc(100dvh - 57px); padding-bottom: max(24px, env(safe-area-inset-bottom)); }
 .modal textarea,
 .field input,
 .field select,
@@ -1072,4 +1074,5 @@ button:disabled {
   .modal {
     border-radius: 25px;
   }
+  .modal.pin-form-modal { border-radius: 0; }
 }
