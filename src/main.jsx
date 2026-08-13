@@ -572,12 +572,12 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
           )}
           <div className="pin-detail-content">
             <div className="pin-creator">
+              <Coin symbol={selected.coin} size="sm" />
               <img src={selected.creatorImage || asset("icon-192.png")} alt="핀 생성자 프로필" />
               <span>@{selected.creator || "battle_newbie"}</span>
-              <Coin symbol={selected.coin} size="sm" />
             </div>
             <small>
-              {selected.category} · 거래 {selected.tradeCoins?.join(", ")}
+              거래 가능한 코인: {selected.tradeCoins?.join(", ")}
             </small>
             <b>{selected.title}</b>
             <p>{selected.description}</p>
@@ -588,13 +588,15 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
             )}
           </div>
           {selected.owner && (
-            <button
+            <button className="pin-delete"
+              aria-label="핀 삭제"
+              title="핀 삭제"
               onClick={() => {
                 setPins((ps) => ps.filter((p) => p.id !== selected.id));
                 setSelected(null);
               }}
             >
-              삭제
+              <X />
             </button>
           )}
         </div>
