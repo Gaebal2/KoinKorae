@@ -547,9 +547,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
     <main className="map-page">
       <div className="map-stage">
         <div className="real-map" ref={mapEl} />
-        <div className="map-crosshair" aria-label="핀 생성 위치">
-          +
-        </div>
+        <div className="map-crosshair" aria-label="핀 생성 위치" />
         <div className="center-coordinate">
           {center.lat.toFixed(6)}, {center.lng.toFixed(6)}
         </div>
