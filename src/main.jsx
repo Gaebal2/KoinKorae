@@ -356,7 +356,7 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
   const groups = useMemo(
     () =>
       Object.entries(
-        filteredPosts.reduce((a, p) => {
+        sorted.reduce((a, p) => {
           (a[p.coin] ??= []).push(p);
           return a;
         }, {}),
@@ -365,7 +365,7 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
           b[1].reduce((s, p) => s + exposure(p), 0) -
           a[1].reduce((s, p) => s + exposure(p), 0),
       ),
-    [filteredPosts],
+    [sorted],
   );
   const coinRanks = useMemo(
     () => buildCoinRanks(filteredPosts),
