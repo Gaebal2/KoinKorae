@@ -16,6 +16,7 @@ import {
   Repeat2,
   Search,
   Shield,
+  SquarePen,
   Swords,
   Trophy,
   X,
@@ -328,7 +329,7 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose }) {
           />
         )}
         <button className="fab" onClick={onCompose}>
-          <Plus />
+          <SquarePen />피드 작성
         </button>
       </main>
       {battle && (
@@ -494,6 +495,17 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
   const limit = lifetime >= 10000 ? 3 : lifetime >= 1000 ? 2 : 1;
   const mine = pins.filter((p) => p.owner).length;
   useEffect(() => {
+    if (!editing) return;
+    history.pushState({ battleFeedOverlay: "pin-form" }, "");
+    const onBack = () => setEditing(false);
+    window.addEventListener("popstate", onBack);
+    return () => window.removeEventListener("popstate", onBack);
+  }, [editing]);
+  const closePinForm = () => {
+    if (history.state?.battleFeedOverlay === "pin-form") history.back();
+    else setEditing(false);
+  };
+  useEffect(() => {
     if (mapRef.current) return;
     const map = L.map(mapEl.current, { zoomControl: false }).setView(
       [center.lat, center.lng],
@@ -595,14 +607,14 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
       {editing && (
         <PinForm
           center={center}
-          onClose={() => setEditing(false)}
+          onClose={closePinForm}
           onSave={(p) => {
             setPins((ps) => [
               ...ps,
               { ...p, id: Date.now(), owner: true, category: "커뮤니티", creator: "battle_newbie", creatorImage: asset("icon-192.png") },
             ]);
             setBp((v) => v - 1);
-            setEditing(false);
+            closePinForm();
           }}
         />
       )}
@@ -913,7 +925,7 @@ function Composer({ onClose, onPublish }) {
     )
     .slice(0, 12);
   return (
-    <Modal title="새 게시물" onClose={onClose}>
+    <Modal title="새 게시물" onClose={onClose} className="composer-modal">
       <textarea
         className="composer-text"
         autoFocus
@@ -1016,6 +1028,17 @@ function App() {
     [bp, setBp] = useState(24),
     [lifetime, setLifetime] = useState(680),
     [compose, setCompose] = useState(false);
+  useEffect(() => {
+    if (!compose) return;
+    history.pushState({ battleFeedOverlay: "composer" }, "");
+    const onBack = () => setCompose(false);
+    window.addEventListener("popstate", onBack);
+    return () => window.removeEventListener("popstate", onBack);
+  }, [compose]);
+  const closeComposer = () => {
+    if (history.state?.battleFeedOverlay === "composer") history.back();
+    else setCompose(false);
+  };
   return (
     <div className={`app-shell ${page === "map" ? "map-active" : ""}`}>
       <Header bp={bp} />
@@ -1066,10 +1089,10 @@ function App() {
       </nav>
       {compose && (
         <Composer
-          onClose={() => setCompose(false)}
+          onClose={closeComposer}
           onPublish={(p) => {
             setPosts((ps) => [p, ...ps]);
-            setCompose(false);
+            closeComposer();
             setPage("home");
           }}
         />
