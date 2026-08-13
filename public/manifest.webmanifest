@@ -1,11 +1,11 @@
 {
-  "name": "Koin Korae",
-  "short_name": "Korae",
-  "description": "코인 커뮤니티와 게임, P2P 마켓",
+  "name": "BattleFeed",
+  "short_name": "BattleFeed",
+  "description": "커뮤니티 참여로 콘텐츠 노출을 결정하는 소셜 플랫폼",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#080a0d",
-  "theme_color": "#080a0d",
+  "background_color": "#f6f8f5",
+  "theme_color": "#176b49",
   "icons": [
     {"src":"./icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
     {"src":"./icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
