@@ -530,11 +530,6 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
   }, [pins]);
   return (
     <main className="map-page">
-      <PageTitle
-        icon={MapPin}
-        title="커뮤니티 지도"
-        sub="지도를 움직여 중앙 + 위치를 선택하세요"
-      />
       <div className="map-stage">
         <div className="real-map" ref={mapEl} />
         <div className="map-crosshair" aria-label="핀 생성 위치">
@@ -981,7 +976,7 @@ function App() {
     [lifetime, setLifetime] = useState(680),
     [compose, setCompose] = useState(false);
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${page === "map" ? "map-active" : ""}`}>
       <Header bp={bp} />
       {page === "home" && (
         <HomePage
