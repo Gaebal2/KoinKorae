@@ -443,16 +443,9 @@ function BattleModal({ post, bp, onClose, onFinish }) {
   };
   return (
     <Modal title="배틀 참여" onClose={onClose}>
-      <div className="battle-title">
-        <Coin symbol={post.coin} />
-        <div>
-          <b>@{post.author}</b>
-          <span>참가 비용 1 BP · 보유 {bp} BP</span>
-        </div>
-      </div>
       {phase === "choose" ? (
         <>
-          <p className="center">어느 쪽에서 배틀하시겠어요?</p>
+          <p className="center battle-question">이 피드를 지지합니까? 반대 합니까?</p>
           <div className="battle-explain">
             <span><Shield />지지하면 이 Feed의 노출 점수가 증가합니다.</span>
             <span><Swords />반대하면 이 Feed의 노출 점수가 감소합니다.</span>
@@ -547,7 +540,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp, onProfile }) {
     pins.forEach((p) => {
       const icon = L.divIcon({
         className: "battle-map-marker",
-        html: `<span style="--pin:${coinColor(p.coin)}">${p.coin.slice(0, 4)}</span>`,
+        html: `<span style="--pin:${coinColor(p.coin)}"><img src="${asset(`coin-icons/${p.coin.toLowerCase()}.svg`)}" alt="${p.coin}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><b>${p.coin.slice(0,4)}</b></span>`,
         iconSize: [40, 48],
         iconAnchor: [20, 45],
       });

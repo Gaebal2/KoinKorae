@@ -799,6 +799,9 @@ button:disabled {
 .center-coordinate { position: absolute; z-index: 5; bottom: 91px; left: 14px; padding: 5px 9px; border-radius: 10px; background: #20362ec7; color: white; font-size: 8px; pointer-events: none; white-space: nowrap; }
 .battle-map-marker { background: none !important; border: 0 !important; }
 .battle-map-marker span { width: 38px; height: 38px; border: 3px solid white; border-radius: 50% 50% 50% 8px; transform: rotate(-45deg); display: grid; place-items: center; background: var(--pin); color: white; box-shadow: 0 3px 10px #16251d66; font-size: 8px; font-weight: 800; }
+.battle-map-marker img { width: 30px; height: 30px; object-fit: contain; transform: rotate(45deg); }
+.battle-map-marker b { display: none; place-items: center; width: 30px; height: 30px; transform: rotate(45deg); font-size: 7px; }
+.battle-question { margin-top: 4px; font-size: 15px; font-weight: 800; color: #15334a; }
 .pin-location { display: flex; align-items: center; gap: 10px; padding: 11px; border-radius: 13px; background: #e9f2eb; margin-bottom: 13px; }
 .pin-location > svg { width: 22px; color: #246d50; }
 .pin-location > div { display: flex; flex-direction: column; }
