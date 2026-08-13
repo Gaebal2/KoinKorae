@@ -313,7 +313,7 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
     [posts],
   );
   const coinRanks = useMemo(
-    () => new Map(groups.map(([coin], index) => [coin, index + 1])),
+    () => new globalThis.Map(groups.map(([coin], index) => [coin, index + 1])),
     [groups],
   );
   const updateScore = (id, type, score) =>
