@@ -890,6 +890,24 @@ function ProfilePage({ posts, setPosts, pins, bp, setBp, lifetime, username }) {
   );
 }
 function Empty({text}){return <div className="empty-state"><BarChart3/><h3>{text}</h3></div>}
+function InstallPrompt(){
+  const [installEvent,setInstallEvent]=useState(null);
+  const [visible,setVisible]=useState(false);
+  const [manual,setManual]=useState(false);
+  useEffect(()=>{
+    const standalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+    if(standalone)return;
+    const onPrompt=event=>{event.preventDefault();setInstallEvent(event);setManual(false);setVisible(true)};
+    const onInstalled=()=>{setVisible(false);setInstallEvent(null)};
+    window.addEventListener("beforeinstallprompt",onPrompt);
+    window.addEventListener("appinstalled",onInstalled);
+    const timer=setTimeout(()=>{setManual(current=>installEvent?current:true);setVisible(true)},1400);
+    return()=>{clearTimeout(timer);window.removeEventListener("beforeinstallprompt",onPrompt);window.removeEventListener("appinstalled",onInstalled)};
+  },[]);
+  const install=async()=>{if(!installEvent){setManual(true);return}await installEvent.prompt();const choice=await installEvent.userChoice;if(choice.outcome==="accepted")setVisible(false);setInstallEvent(null)};
+  if(!visible)return null;
+  return <div className="install-overlay" role="dialog" aria-modal="true" aria-labelledby="install-heading"><section className="install-card"><button className="install-dismiss" onClick={()=>setVisible(false)} aria-label="설치 안내 닫기"><X/></button><img src={asset("koin-korae-app-icon-blue-v2.png")} alt="ㅋㅇㄱㄹ 앱 아이콘"/><small>ㅋㅇㄱㄹ APP</small><h2 id="install-heading">앱으로 설치할까요?</h2><p>{manual&&!installEvent?<>Chrome 우측 상단 <b>⋮</b> 메뉴에서<br/><b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 선택해 주세요.</>:"홈 화면에서 더 빠르고 편하게 이용할 수 있어요."}</p><button className="install-action" onClick={install}>{installEvent?"앱 설치하기":"설치 방법 확인"}</button><button className="install-later" onClick={()=>setVisible(false)}>나중에</button></section></div>
+}
 function Composer({ onClose, onPublish }) {
   const [content, setContent] = useState(""),
     [coin, setCoin] = useState("BTC"),
@@ -1080,6 +1098,7 @@ function App() {
           }}
         />
       )}
+      <InstallPrompt />
     </div>
   );
 }
