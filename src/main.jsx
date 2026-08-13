@@ -118,7 +118,7 @@ const seedPins = [
     category: "판매",
     lat: 37.5628,
     lng: 126.973,
-    owner: true,
+    owner: false,
   },
 ];
 const windows = ["오늘", "이번 달", "올해", "전체"];
