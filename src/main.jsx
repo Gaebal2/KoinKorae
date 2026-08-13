@@ -28,6 +28,15 @@ import "leaflet/dist/leaflet.css";
 import "./styles.css";
 
 const asset = (name) => `${import.meta.env.BASE_URL}${name}`;
+const profileImage = (username) => {
+  if (username === "battle_newbie") return asset("koin-korae-app-icon-blue-v2.png");
+  const palettes = [["#075ea8","#64dde3"],["#6548a8","#b7a8ff"],["#c55765","#ffc1c8"],["#b46b16","#ffd28b"],["#176f78","#8ce7e1"]];
+  const index=[...username].reduce((sum,char)=>sum+char.charCodeAt(0),0)%palettes.length;
+  const [from,to]=palettes[index];
+  const initials=username.split(/[_\s-]/).map(part=>part[0]).join("").slice(0,2).toUpperCase();
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs><rect width="160" height="160" rx="80" fill="url(#g)"/><circle cx="80" cy="62" r="28" fill="#fff" fill-opacity=".18"/><text x="80" y="101" text-anchor="middle" font-family="Arial,sans-serif" font-size="48" font-weight="700" fill="white">${initials}</text></svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+};
 
 const seedPosts = [
   {
@@ -102,7 +111,7 @@ const seedPins = [
     owner: false,
     image: asset("cinema-feed.png"),
     creator: "ethernaut",
-    creatorImage: asset("icon-192.png"),
+    creatorImage: profileImage("ethernaut"),
   },
   {
     id: 2,
@@ -117,7 +126,7 @@ const seedPins = [
     owner: false,
     image: asset("cinema-feed.png"),
     creator: "blockwhale",
-    creatorImage: asset("icon-192.png"),
+    creatorImage: profileImage("blockwhale"),
   },
   {
     id: 3,
@@ -132,7 +141,7 @@ const seedPins = [
     owner: false,
     image: asset("cinema-feed.png"),
     creator: "sol_runner",
-    creatorImage: asset("icon-192.png"),
+    creatorImage: profileImage("sol_runner"),
   },
 ];
 const windows = ["오늘", "이번 달", "올해", "전체"];
@@ -580,7 +589,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp, onProfile }) {
           <div className="pin-detail-content">
             <div className="pin-creator">
               <Coin symbol={selected.coin} size="sm" />
-              <button className="pin-creator-profile" onClick={()=>onProfile(selected.creator || "battle_newbie")} aria-label="핀 생성자 프로필 보기"><img src={selected.creatorImage || asset("koin-korae-app-icon-blue-v2.png")} alt="핀 생성자 프로필" /></button>
+              <button type="button" className="pin-creator-profile" onPointerDown={event=>event.stopPropagation()} onClick={event=>{event.preventDefault();event.stopPropagation();onProfile?.(selected.creator || "battle_newbie")}} aria-label="핀 생성자 프로필 보기"><img src={profileImage(selected.creator || "battle_newbie")} alt={`${selected.creator || "battle_newbie"} 프로필`} /></button>
               <span>@{selected.creator || "battle_newbie"}</span>
             </div>
             <small>
@@ -852,11 +861,11 @@ function ProfilePage({ posts, setPosts, pins, bp, setBp, lifetime, username }) {
   const people={팔로워:['coinlover','eth_builder','mapmaker'],팔로잉:['blockwhale','sol_runner'],친구:['ethernaut','xrpulse']};
   useEffect(()=>{if(view==="프로필")return;history.pushState({battleFeedOverlay:"profile-subpage"},"");const onBack=()=>setView("프로필");window.addEventListener("popstate",onBack);return()=>window.removeEventListener("popstate",onBack)},[view]);
   const closeSubpage=()=>{if(history.state?.battleFeedOverlay==="profile-subpage")history.back();else setView("프로필")};
-  if(view!=="프로필") return <main className="profile-subpage"><button className="profile-back" onClick={closeSubpage}>← 내 프로필</button><h1>{view}</h1>{people[view]?<div className="people-list">{people[view].map((name,i)=><div key={name}><img src={asset("koin-korae-app-icon-blue-v2.png")} alt=""/><span><b>@{name}</b><small>{i%2?'함께 성장하는 커뮤니티 멤버':'코인과 기술 이야기를 나눕니다'}</small></span><button>{view==='친구'?'친구':'팔로우'}</button></div>)}</div>:view==='PIN'?<div className="profile-pin-list">{pins.filter(p=>p.owner).length?pins.filter(p=>p.owner).map(p=><div key={p.id}><Coin symbol={p.coin}/><span><b>{p.title}</b><small>{p.description}</small></span></div>):<Empty text="생성한 PIN이 없습니다"/>}</div>:<div className="profile-comments"><div><b>블록체인 스터디</b><p>초보자도 함께할 수 있어서 기대됩니다!</p></div><div><b>퍼블릭 굿즈에 대한 제안</b><p>지속 가능한 참여 방식에 공감합니다.</p></div></div>}</main>;
+  if(view!=="프로필") return <main className="profile-subpage"><button className="profile-back" onClick={closeSubpage}>← 내 프로필</button><h1>{view}</h1>{people[view]?<div className="people-list">{people[view].map((name,i)=><div key={name}><img src={profileImage(name)} alt={`${name} 프로필`}/><span><b>@{name}</b><small>{i%2?'함께 성장하는 커뮤니티 멤버':'코인과 기술 이야기를 나눕니다'}</small></span><button>{view==='친구'?'친구':'팔로우'}</button></div>)}</div>:view==='PIN'?<div className="profile-pin-list">{pins.filter(p=>p.owner).length?pins.filter(p=>p.owner).map(p=><div key={p.id}><Coin symbol={p.coin}/><span><b>{p.title}</b><small>{p.description}</small></span></div>):<Empty text="생성한 PIN이 없습니다"/>}</div>:<div className="profile-comments"><div><b>블록체인 스터디</b><p>초보자도 함께할 수 있어서 기대됩니다!</p></div><div><b>퍼블릭 굿즈에 대한 제안</b><p>지속 가능한 참여 방식에 공감합니다.</p></div></div>}</main>;
   return (
     <main className="profile-page-x">
       <section className="profile-head">
-        <img className="profile-avatar" src={asset("koin-korae-app-icon-blue-v2.png")} alt="내 프로필" />
+        <img className="profile-avatar" src={profileImage(username)} alt={`${username} 프로필`} />
         <h1>@{username}</h1>
         <p>투명한 피드와 열린 커뮤니티를 응원합니다.</p>
         <div className="profile-social"><button onClick={()=>setView('팔로워')}><b>128</b> 팔로워</button><button onClick={()=>setView('팔로잉')}><b>64</b> 팔로잉</button></div>
