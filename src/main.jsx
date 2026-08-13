@@ -500,7 +500,6 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
       maxZoom: 19,
       attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
-    L.control.zoom({ position: "bottomright" }).addTo(map);
     map.on("moveend", () => {
       const c = map.getCenter();
       setCenter({ lat: +c.lat.toFixed(6), lng: +c.lng.toFixed(6) });
