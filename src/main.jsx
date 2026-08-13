@@ -30,6 +30,7 @@ import "./styles.css";
 const asset = (name) => `${import.meta.env.BASE_URL}${name}`;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DUMMY_SCORE_LEADS = [0, 3000, -1600, 2200, -800, 1600, -2400, 1000, -3200, 2600];
+const CONTROVERSIAL_DUMMY_COINS = [2, 5, 8];
 const profileImage = (username) => {
   if (username === "battle_newbie") return asset("koin-korae-app-icon-blue-v2.png");
   const palettes = [["#075ea8","#64dde3"],["#6548a8","#b7a8ff"],["#c55765","#ffc1c8"],["#b46b16","#ffd28b"],["#176f78","#8ce7e1"]];
@@ -118,18 +119,23 @@ const seedPosts = [
       initials: coin.symbol.slice(0, 2),
       coin: coin.symbol,
       age: `${coinIndex + feedIndex + 1}시간`,
-      content: `${coin.name}(${coin.symbol}) — ${content}`,
+      content: `${coin.name}(${coin.symbol}) — ${content}${feedIndex === 0 && CONTROVERSIAL_DUMMY_COINS.includes(coinIndex) ? " 지지와 반대 의견이 팽팽하게 맞서고 있습니다." : ""}`,
       support:
-        7000 +
-        (10 - coinIndex) * 350 +
-        [
-          DUMMY_SCORE_LEADS[coinIndex],
-          -DUMMY_SCORE_LEADS[coinIndex],
-          1200,
-          -1200,
-          0,
-        ][feedIndex],
-      oppose: 80 + coinIndex * 14 + feedIndex * 19,
+        feedIndex === 0 && CONTROVERSIAL_DUMMY_COINS.includes(coinIndex)
+          ? 10000 + [12, -3, 8][CONTROVERSIAL_DUMMY_COINS.indexOf(coinIndex)]
+          : 7000 +
+            (10 - coinIndex) * 350 +
+            [
+              DUMMY_SCORE_LEADS[coinIndex],
+              -DUMMY_SCORE_LEADS[coinIndex],
+              1200,
+              -1200,
+              0,
+            ][feedIndex],
+      oppose:
+        feedIndex === 0 && CONTROVERSIAL_DUMMY_COINS.includes(coinIndex)
+          ? 10000
+          : 80 + coinIndex * 14 + feedIndex * 19,
       comments: 12 + coinIndex * 3 + feedIndex * 4,
       reposts: 4 + coinIndex + feedIndex * 2,
       tone: ["orange", "blue", "purple", "slate", "green"][feedIndex],
