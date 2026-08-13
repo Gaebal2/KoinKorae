@@ -970,10 +970,11 @@ button:disabled {
 .profile-subpage h1 { font-size: 21px; margin: 12px 0 18px; }
 .profile-back { border: 0; background: none; padding: 4px 0; color: #246d50; font-size: 12px; font-weight: 800; }
 .people-list,.profile-pin-list,.profile-comments { display: flex; flex-direction: column; gap: 8px; }
-.people-list > div,.profile-pin-list > div,.profile-comments > div { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 15px; background: white; }
+.people-list > div,.profile-comments > div { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 15px; background: white; }
 .people-list img { width: 43px; height: 43px; border-radius: 50%; object-fit: cover; }
-.people-list span,.profile-pin-list span { min-width: 0; display: flex; flex-direction: column; flex: 1; }
-.people-list small,.profile-pin-list small { font-size: 9px; color: #7d8881; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.people-list span { min-width: 0; display: flex; flex-direction: column; flex: 1; }
+.people-list small { font-size: 9px; color: #7d8881; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-pin-list .profile-pin-card { position: relative; inset: auto; width: 100%; box-sizing: border-box; }
 .people-list button { border: 0; border-radius: 12px; background: #e6f1de; color: #336848; padding: 7px 10px; font-size: 9px; font-weight: 800; }
 .profile-comments > div { display: block; }
 .profile-comments b { font-size: 10px; color: #6e7c73; }

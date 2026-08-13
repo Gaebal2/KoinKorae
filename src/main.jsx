@@ -545,6 +545,31 @@ function CoinFeed({ groups, coinRanks, category, ...actions }) {
     </div>
   );
 }
+function PinDetailCard({ pin, onProfile, onImage, onDelete, className = "" }) {
+  return (
+    <div className={`pin-detail ${className}`}>
+      {pin.image && (
+        <button className="pin-detail-photo-button" onClick={() => onImage?.(pin)} aria-label="사진 전체 화면으로 보기">
+          <img className="pin-detail-photo" src={pin.image} alt="핀 등록 사진" />
+        </button>
+      )}
+      <div className="pin-detail-content">
+        <div className="pin-creator">
+          <Coin symbol={pin.coin} size="sm" />
+          <button type="button" className="pin-creator-profile" onClick={() => onProfile?.(pin.creator || "battle_newbie")} aria-label="핀 생성자 프로필 보기">
+            <img src={profileImage(pin.creator || "battle_newbie")} alt={`${pin.creator || "battle_newbie"} 프로필`} />
+          </button>
+          <span>@{pin.creator || "battle_newbie"}</span>
+        </div>
+        <small>거래 가능한 코인: {pin.tradeCoins?.join(", ")}</small>
+        <b>{pin.title}</b>
+        <p>{pin.description}</p>
+        {pin.link && <a href={pin.link} target="_blank" rel="noreferrer">{pin.link}</a>}
+      </div>
+      {onDelete && <button className="pin-delete" aria-label="핀 삭제" title="핀 삭제" onClick={() => onDelete(pin)}>삭제</button>}
+    </div>
+  );
+}
 function BattleModal({ post, bp, onClose, onFinish }) {
   const [side, setSide] = useState(null),
     [phase, setPhase] = useState("choose"),
@@ -701,42 +726,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp, onProfile }) {
         </button>
       </div>
       {selected && (
-        <div className="pin-detail">
-          {selected.image && (
-            <button className="pin-detail-photo-button" onClick={() => setImageOpen(true)} aria-label="사진 전체 화면으로 보기">
-              <img className="pin-detail-photo" src={selected.image} alt="핀 등록 사진" />
-            </button>
-          )}
-          <div className="pin-detail-content">
-            <div className="pin-creator">
-              <Coin symbol={selected.coin} size="sm" />
-              <button type="button" className="pin-creator-profile" onPointerDown={event=>event.stopPropagation()} onClick={event=>{event.preventDefault();event.stopPropagation();onProfile?.(selected.creator || "battle_newbie")}} aria-label="핀 생성자 프로필 보기"><img src={profileImage(selected.creator || "battle_newbie")} alt={`${selected.creator || "battle_newbie"} 프로필`} /></button>
-              <span>@{selected.creator || "battle_newbie"}</span>
-            </div>
-            <small>
-              거래 가능한 코인: {selected.tradeCoins?.join(", ")}
-            </small>
-            <b>{selected.title}</b>
-            <p>{selected.description}</p>
-            {selected.link && (
-              <a href={selected.link} target="_blank" rel="noreferrer">
-                {selected.link}
-              </a>
-            )}
-          </div>
-          {selected.owner && (
-            <button className="pin-delete"
-              aria-label="핀 삭제"
-              title="핀 삭제"
-              onClick={() => {
-                setPins((ps) => ps.filter((p) => p.id !== selected.id));
-                setSelected(null);
-              }}
-            >
-              삭제
-            </button>
-          )}
-        </div>
+        <PinDetailCard pin={selected} onProfile={onProfile} onImage={() => setImageOpen(true)} onDelete={selected.owner ? (pin) => { setPins((ps) => ps.filter((p) => p.id !== pin.id)); setSelected(null); } : null} />
       )}
       {editing && (
         <PinForm
@@ -973,7 +963,7 @@ function CheckinPage({ bp, setBp, lifetime, setLifetime }) {
     </main>
   );
 }
-function ProfilePage({ posts, setPosts, pins, bp, setBp, lifetime, username, coinRanks }) {
+function ProfilePage({ posts, setPosts, pins, setPins, bp, setBp, lifetime, username, coinRanks }) {
   const [view, setView] = useState("프로필");
   const [battle,setBattle]=useState(null);
   const isMe=username==="battle_newbie";
@@ -982,7 +972,7 @@ function ProfilePage({ posts, setPosts, pins, bp, setBp, lifetime, username, coi
   const people={팔로워:['coinlover','eth_builder','mapmaker'],팔로잉:['blockwhale','sol_runner'],친구:['ethernaut','xrpulse']};
   useEffect(()=>{if(view==="프로필")return;history.pushState({battleFeedOverlay:"profile-subpage"},"");const onBack=()=>setView("프로필");window.addEventListener("popstate",onBack);return()=>window.removeEventListener("popstate",onBack)},[view]);
   const closeSubpage=()=>{if(history.state?.battleFeedOverlay==="profile-subpage")history.back();else setView("프로필")};
-  if(view!=="프로필") return <main className="profile-subpage"><button className="profile-back" onClick={closeSubpage}>← 내 프로필</button><h1>{view}</h1>{people[view]?<div className="people-list">{people[view].map((name,i)=><div key={name}><img src={profileImage(name)} alt={`${name} 프로필`}/><span><b>@{name}</b><small>{i%2?'함께 성장하는 커뮤니티 멤버':'코인과 기술 이야기를 나눕니다'}</small></span><button>{view==='친구'?'친구':'팔로우'}</button></div>)}</div>:view==='PIN'?<div className="profile-pin-list">{pins.filter(p=>p.owner).length?pins.filter(p=>p.owner).map(p=><div key={p.id}><Coin symbol={p.coin}/><span><b>{p.title}</b><small>{p.description}</small></span></div>):<Empty text="생성한 PIN이 없습니다"/>}</div>:<div className="profile-comments"><div><b>블록체인 스터디</b><p>초보자도 함께할 수 있어서 기대됩니다!</p></div><div><b>퍼블릭 굿즈에 대한 제안</b><p>지속 가능한 참여 방식에 공감합니다.</p></div></div>}</main>;
+  if(view!=="프로필") return <main className="profile-subpage"><button className="profile-back" onClick={closeSubpage}>← 내 프로필</button><h1>{view}</h1>{people[view]?<div className="people-list">{people[view].map((name,i)=><div key={name}><img src={profileImage(name)} alt={`${name} 프로필`}/><span><b>@{name}</b><small>{i%2?'함께 성장하는 커뮤니티 멤버':'코인과 기술 이야기를 나눕니다'}</small></span><button>{view==='친구'?'친구':'팔로우'}</button></div>)}</div>:view==='PIN'?<div className="profile-pin-list">{pins.filter(p=>p.owner).length?pins.filter(p=>p.owner).map(p=><PinDetailCard key={p.id} pin={p} className="profile-pin-card" onImage={(pin)=>window.open(pin.image,"_blank")} onDelete={(pin)=>setPins(all=>all.filter(item=>item.id!==pin.id))}/>):<Empty text="생성한 PIN이 없습니다"/>}</div>:<div className="profile-comments"><div><b>블록체인 스터디</b><p>초보자도 함께할 수 있어서 기대됩니다!</p></div><div><b>퍼블릭 굿즈에 대한 제안</b><p>지속 가능한 참여 방식에 공감합니다.</p></div></div>}</main>;
   return (
     <main className="profile-page-x">
       <section className="profile-head">
@@ -1182,6 +1172,7 @@ function App() {
       {page === "map" && (
         <MapPage
           pins={pins}
+          setPins={setPins}
           setPins={setPins}
           lifetime={lifetime}
           bp={bp}
