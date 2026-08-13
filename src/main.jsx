@@ -28,6 +28,7 @@ import "leaflet/dist/leaflet.css";
 import "./styles.css";
 
 const asset = (name) => `${import.meta.env.BASE_URL}${name}`;
+const DAY_MS = 24 * 60 * 60 * 1000;
 const profileImage = (username) => {
   if (username === "battle_newbie") return asset("koin-korae-app-icon-blue-v2.png");
   const palettes = [["#075ea8","#64dde3"],["#6548a8","#b7a8ff"],["#c55765","#ffc1c8"],["#b46b16","#ffd28b"],["#176f78","#8ce7e1"]];
@@ -53,6 +54,7 @@ const seedPosts = [
     reposts: 32,
     tone: "orange",
     image: asset("cinema-feed.png"),
+    createdAt: Date.now() - 15 * 60 * 1000,
   },
   {
     id: 2,
@@ -68,6 +70,7 @@ const seedPosts = [
     reposts: 18,
     tone: "purple",
     image: asset("koin-korae-app-icon-blue-v2.png"),
+    createdAt: Date.now() - 2 * DAY_MS,
   },
   {
     id: 3,
@@ -83,6 +86,7 @@ const seedPosts = [
     reposts: 67,
     tone: "blue",
     image: asset("koin-korae-app-icon.png"),
+    createdAt: Date.now() - 45 * DAY_MS,
   },
   {
     id: 4,
@@ -98,6 +102,7 @@ const seedPosts = [
     reposts: 11,
     tone: "slate",
     image: asset("koin-korae-icon-source.png"),
+    createdAt: Date.now() - 420 * DAY_MS,
   },
   ...cmcCoins.slice(0, 10).flatMap((coin, coinIndex) =>
     [
@@ -119,6 +124,8 @@ const seedPosts = [
       reposts: 4 + coinIndex + feedIndex * 2,
       tone: ["orange", "blue", "purple", "slate", "green"][feedIndex],
       image: feedIndex === 0 ? asset("cinema-feed.png") : "",
+      createdAt:
+        Date.now() - [0, 4, 24, 160, 540][feedIndex] * DAY_MS - coinIndex * 60 * 60 * 1000,
     })),
   ),
 ];
@@ -318,27 +325,38 @@ function PostCard({ post, onBattle, onComment, onRepost, onProfile, rank }) {
 
 function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
   const [feed, setFeed] = useState("유저 피드");
-  const [window, setWindow] = useState("오늘");
+  const [period, setPeriod] = useState("오늘");
   const [category, setCategory] = useState("노출");
   const [battle, setBattle] = useState(null);
   const [commentPost, setCommentPost] = useState(null);
   const [comment, setComment] = useState("");
+  const filteredPosts = useMemo(() => {
+    const now = new Date();
+    const cutoff =
+      period === "오늘"
+        ? new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
+        : period === "이번 달"
+          ? new Date(now.getFullYear(), now.getMonth(), 1).getTime()
+          : period === "올해"
+            ? new Date(now.getFullYear(), 0, 1).getTime()
+            : 0;
+    return posts.filter((post) => (post.createdAt || 0) >= cutoff);
+  }, [posts, period]);
   const sorted = useMemo(
     () =>
-      [...posts].sort((a, b) => {
-        if (a.isFresh !== b.isFresh) return a.isFresh ? -1 : 1;
+      [...filteredPosts].sort((a, b) => {
         return category === "논쟁"
           ? b.support + b.oppose - (a.support + a.oppose)
           : category === "최신"
-            ? b.id - a.id
+            ? (b.createdAt || 0) - (a.createdAt || 0)
             : exposure(b) - exposure(a);
       }),
-    [posts, category],
+    [filteredPosts, category],
   );
   const groups = useMemo(
     () =>
       Object.entries(
-        posts.reduce((a, p) => {
+        filteredPosts.reduce((a, p) => {
           (a[p.coin] ??= []).push(p);
           return a;
         }, {}),
@@ -347,11 +365,11 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
           b[1].reduce((s, p) => s + exposure(p), 0) -
           a[1].reduce((s, p) => s + exposure(p), 0),
       ),
-    [posts],
+    [filteredPosts],
   );
   const coinRanks = useMemo(
-    () => buildCoinRanks(posts),
-    [posts],
+    () => buildCoinRanks(filteredPosts),
+    [filteredPosts],
   );
   const updateScore = (id, type, score) =>
     setPosts((ps) =>
@@ -364,25 +382,29 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
   return (
     <>
       <main className="home-page">
-        <Segments
-          items={["유저 피드", "코인 피드"]}
-          value={feed}
-          onChange={setFeed}
-        />
-        <div className="filters">
-          <Segments
-            items={windows}
-            value={window}
-            onChange={setWindow}
-            compact
-          />
-          <span className="filter-divider" />
-          <Segments
-            items={categories}
-            value={category}
-            onChange={setCategory}
-            compact
-          />
+        <div className="feed-controls">
+          <div className="feed-toggle">
+            <Segments
+              items={["유저 피드", "코인 피드"]}
+              value={feed}
+              onChange={setFeed}
+            />
+          </div>
+          <div className="filters">
+            <Segments
+              items={windows}
+              value={period}
+              onChange={setPeriod}
+              compact
+            />
+            <span className="filter-divider" />
+            <Segments
+              items={categories}
+              value={category}
+              onChange={setCategory}
+              compact
+            />
+          </div>
         </div>
         {feed === "유저 피드" ? (
           <div className="feed">
@@ -1044,6 +1066,7 @@ function Composer({ onClose, onPublish }) {
             tone: "green",
             image,
             isFresh: true,
+            createdAt: Date.now(),
           })
         }
       >

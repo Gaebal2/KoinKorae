@@ -142,7 +142,22 @@ main {
   margin: 13px 0 10px;
 }
 .home-page { padding-top: 4px; }
-.home-page > .segments:first-child { margin-top: 0; }
+.feed-controls {
+  position: sticky;
+  top: 66px;
+  z-index: 18;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -4px -14px 12px;
+  padding: 8px 14px;
+  background: #f3f8fce8;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #dce8f1;
+}
+.feed-toggle { width: 142px; flex: none; }
+.feed-toggle .segments { margin: 0; }
+.feed-toggle .segments button { min-height: 32px; font-size: 11px; }
 .segments button {
   min-height: 38px;
   border: 0;
@@ -182,8 +197,10 @@ main {
   flex-direction: row;
   align-items: center;
   gap: 6px;
-  margin: 0 -14px 13px;
-  padding: 0 14px 5px;
+  min-width: 0;
+  flex: 1;
+  margin: 0;
+  padding: 0;
   overflow-x: auto;
   scrollbar-width: none;
 }
