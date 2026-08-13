@@ -220,7 +220,7 @@ const seedPins = [
   })),
 ];
 const windows = ["오늘", "이번 달", "올해", "전체"];
-const categories = ["노출", "논쟁", "급상승", "최신", "팔로잉"];
+const categories = ["노출", "최신", "팔로잉", "급상승", "논쟁"];
 const nav = [
   ["home", "홈", Home],
   ["map", "지도", Map],
@@ -232,6 +232,29 @@ const fmt = (n) =>
     notation: Math.abs(n) > 999 ? "compact" : "standard",
   }).format(n);
 const exposure = (p) => p.support - p.oppose;
+const isFollowingPost = (post) =>
+  ["blockwhale", "sol_runner", "ethernaut"].includes(post.author) ||
+  post.author.endsWith("_hodler_1");
+const risingScore = (post) => {
+  const hours = Math.max(1, (Date.now() - (post.createdAt || 0)) / (60 * 60 * 1000));
+  return exposure(post) / hours;
+};
+const comparePosts = (category) => (a, b) =>
+  category === "논쟁"
+    ? b.support + b.oppose - (a.support + a.oppose)
+    : category === "최신"
+      ? (b.createdAt || 0) - (a.createdAt || 0)
+      : category === "급상승"
+        ? risingScore(b) - risingScore(a)
+        : exposure(b) - exposure(a);
+const groupMetric = (items, category) =>
+  category === "논쟁"
+    ? items.reduce((sum, post) => sum + post.support + post.oppose, 0)
+    : category === "최신"
+      ? Math.max(...items.map((post) => post.createdAt || 0))
+      : category === "급상승"
+        ? items.reduce((sum, post) => sum + risingScore(post), 0)
+        : items.reduce((sum, post) => sum + exposure(post), 0);
 const buildCoinRanks = (posts) => {
   const totals = posts.reduce((scores, post) => {
     scores[post.coin] = (scores[post.coin] || 0) + exposure(post);
@@ -360,13 +383,10 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
   }, [posts, period]);
   const sorted = useMemo(
     () =>
-      [...filteredPosts].sort((a, b) => {
-        return category === "논쟁"
-          ? b.support + b.oppose - (a.support + a.oppose)
-          : category === "최신"
-            ? (b.createdAt || 0) - (a.createdAt || 0)
-            : exposure(b) - exposure(a);
-      }),
+      (category === "팔로잉"
+        ? filteredPosts.filter(isFollowingPost)
+        : [...filteredPosts]
+      ).sort(comparePosts(category)),
     [filteredPosts, category],
   );
   const groups = useMemo(
@@ -376,12 +396,8 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
           (a[p.coin] ??= []).push(p);
           return a;
         }, {}),
-      ).sort(
-        (a, b) =>
-          b[1].reduce((s, p) => s + exposure(p), 0) -
-          a[1].reduce((s, p) => s + exposure(p), 0),
-      ),
-    [sorted],
+      ).sort((a, b) => groupMetric(b[1], category) - groupMetric(a[1], category)),
+    [sorted, category],
   );
   const coinRanks = useMemo(
     () => buildCoinRanks(filteredPosts),
@@ -408,16 +424,16 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
           </div>
           <div className="filters">
             <Segments
-              items={windows}
-              value={period}
-              onChange={setPeriod}
+              items={categories}
+              value={category}
+              onChange={setCategory}
               compact
             />
             <span className="filter-divider" />
             <Segments
-              items={categories}
-              value={category}
-              onChange={setCategory}
+              items={windows}
+              value={period}
+              onChange={setPeriod}
               compact
             />
           </div>
@@ -439,6 +455,8 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
         ) : (
           <CoinFeed
             groups={groups}
+            coinRanks={coinRanks}
+            category={category}
             onBattle={setBattle}
             onComment={setCommentPost}
             onRepost={repost}
@@ -493,12 +511,13 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
     </>
   );
 }
-function CoinFeed({ groups, ...actions }) {
+function CoinFeed({ groups, coinRanks, category, ...actions }) {
   const [open, setOpen] = useState({});
   return (
     <div>
-      {groups.map(([coin, items], i) => {
-        const score = items.reduce((s, p) => s + exposure(p), 0);
+      {groups.map(([coin, items]) => {
+        const score = groupMetric(items, category);
+        const label = category === "논쟁" ? "논쟁 참여" : category === "급상승" ? "급상승" : "코인 노출";
         return (
           <section className="coin-group" key={coin}>
             <button
@@ -508,18 +527,17 @@ function CoinFeed({ groups, ...actions }) {
               <Coin symbol={coin} />
               <div>
                 <b>
-                  #{i + 1} {coin}
+                  #{coinRanks.get(coin)} {coin}
                 </b>
                 <small>
-                  코인 노출 {score > 0 ? "+" : ""}
-                  {fmt(score)}
+                  {category === "최신" ? `최근 피드 ${items[0].age}` : `${label} ${score > 0 ? "+" : ""}${fmt(Math.round(score))}`}
                 </small>
               </div>
               {open[coin] ? <ChevronUp /> : <ChevronDown />}
             </button>
             {open[coin] &&
               items.map((p) => (
-                <PostCard key={p.id} post={p} rank={i + 1} {...actions} />
+                <PostCard key={p.id} post={p} rank={coinRanks.get(coin)} {...actions} />
               ))}
           </section>
         );
