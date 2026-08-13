@@ -52,6 +52,7 @@ const seedPosts = [
     comments: 84,
     reposts: 32,
     tone: "orange",
+    image: asset("cinema-feed.png"),
   },
   {
     id: 2,
@@ -66,6 +67,7 @@ const seedPosts = [
     comments: 51,
     reposts: 18,
     tone: "purple",
+    image: asset("koin-korae-app-icon-blue-v2.png"),
   },
   {
     id: 3,
@@ -80,6 +82,7 @@ const seedPosts = [
     comments: 203,
     reposts: 67,
     tone: "blue",
+    image: asset("koin-korae-app-icon.png"),
   },
   {
     id: 4,
@@ -94,6 +97,7 @@ const seedPosts = [
     comments: 29,
     reposts: 11,
     tone: "slate",
+    image: asset("koin-korae-icon-source.png"),
   },
 ];
 const seedPins = [
@@ -220,6 +224,7 @@ function PostCard({ post, onBattle, onComment, onRepost, onProfile, rank }) {
         <Coin symbol={post.coin} />
       </div>
       <p className="post-body">{post.content}</p>
+      {post.image&&<button className="post-image" type="button" onClick={()=>window.open(post.image,"_blank")} aria-label="피드 이미지 크게 보기"><img src={post.image} alt="피드 첨부 이미지"/></button>}
       <div className="battle-meter">
         <i style={{ width: `${(post.support / total) * 100}%` }} />
         <span>지지 {fmt(post.support)}</span>
@@ -905,14 +910,17 @@ function InstallPrompt(){
 function Composer({ onClose, onPublish }) {
   const [content, setContent] = useState(""),
     [coin, setCoin] = useState("BTC"),
-    [query, setQuery] = useState("");
+    [query, setQuery] = useState(""),
+    [image,setImage]=useState("");
+  const fileRef=useRef(null);
+  const chooseImage=event=>{const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>setImage(reader.result);reader.readAsDataURL(file)};
   const list = cmcCoins
     .filter((c) =>
       `${c.name} ${c.symbol}`.toLowerCase().includes(query.toLowerCase()),
     )
     .slice(0, 12);
   return (
-    <Modal title="새 게시물" onClose={onClose} className="composer-modal">
+    <Modal title="새 피드 작성" onClose={onClose} className="composer-modal">
       <textarea
         className="composer-text"
         autoFocus
@@ -922,6 +930,10 @@ function Composer({ onClose, onPublish }) {
         placeholder="커뮤니티에 어떤 이야기를 전할까요?"
       />
       <span className="counter">{content.length}/500</span>
+      <div className="feed-image-field">
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={chooseImage}/>
+        {image?<div className="feed-image-preview"><img src={image} alt="피드 이미지 미리보기"/><button type="button" onClick={()=>setImage("")} aria-label="이미지 제거"><X/></button></div>:<button type="button" className="feed-image-picker" onClick={()=>fileRef.current?.click()}><ImagePlus/>이미지 추가</button>}
+      </div>
       <label className="search">
         <Search />
         <input
@@ -964,6 +976,7 @@ function Composer({ onClose, onPublish }) {
             comments: 0,
             reposts: 0,
             tone: "green",
+            image,
           })
         }
       >

@@ -283,6 +283,8 @@ main {
   margin: 14px 0;
   color: #28332c;
 }
+.post-image { width: 100%; height: 205px; border: 0; border-radius: 14px; padding: 0; overflow: hidden; background: #e5edf3; display: block; margin: 11px 0; }
+.post-image img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .battle-meter {
   height: 25px;
   background: #f2dedf;
@@ -1042,6 +1044,13 @@ button:disabled {
   height: 135px !important;
   font-size: 16px;
 }
+.feed-image-field { margin: 9px 0 13px; }
+.feed-image-picker { width: 100%; height: 88px; border: 1px dashed #9bcbdc; border-radius: 14px; background: #eef8fc; color: #075ea8; display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 11px; font-weight: 800; }
+.feed-image-picker svg { width: 22px; }
+.feed-image-preview { height: 190px; position: relative; border-radius: 15px; overflow: hidden; background: #e4edf3; }
+.feed-image-preview > img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.feed-image-preview > button { position: absolute; right: 9px; top: 9px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #06182ddd; color: white; display: grid; place-items: center; }
+.feed-image-preview svg { width: 16px; }
 .counter {
   display: block;
   text-align: right;
