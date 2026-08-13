@@ -228,6 +228,9 @@ main {
   color: white;
   font-weight: 800;
   font-size: 11px;
+  border: 0;
+  padding: 0;
+  flex: none;
 }
 .tone-orange {
   background: #cb7444;
@@ -757,7 +760,8 @@ button:disabled {
 .pin-detail-photo { width: 100%; height: 100%; min-height: 92px; display: block; object-fit: cover; }
 .pin-detail-content { width: 100%; min-width: 0; max-width: none; overflow: hidden; }
 .pin-creator { display: flex; flex-direction: row !important; align-items: center; gap: 6px; margin-bottom: 4px; }
-.pin-creator > img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+.pin-creator-profile { width: 26px; height: 26px; border: 0; border-radius: 50%; padding: 0; overflow: hidden; flex: none; background: none; }
+.pin-creator-profile img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .pin-creator > span { flex: 1; font-size: 9px; font-weight: 800; color: #34483d; overflow: hidden; text-overflow: ellipsis; }
 .pin-creator .coin { width: 27px; min-width: 27px; height: 27px; min-height: 27px; aspect-ratio: 1; flex: 0 0 27px; }
 .pin-detail > div {

@@ -172,7 +172,7 @@ function Header({ bp, onProfile }) {
     <header className="topbar">
       <div className="logo">
         <button className="header-profile" onClick={onProfile} aria-label="내 프로필로 이동"><img src={asset("koin-korae-app-icon-blue-v2.png")} alt="내 프로필" /></button>
-        <div>ㅋㅇㄱㄹ<small>POWERED BY PEOPLE</small></div>
+        <div>ㅋㅇㄱㄹ<small>POWERED BY COIN HODLER</small></div>
       </div>
       <div className="bp-pill">
         <Zap /> <b>{bp}</b> BP
@@ -196,12 +196,12 @@ function Segments({ items, value, onChange, compact = false }) {
   );
 }
 
-function PostCard({ post, onBattle, onComment, onRepost, rank }) {
+function PostCard({ post, onBattle, onComment, onRepost, onProfile, rank }) {
   const total = post.support + post.oppose || 1;
   return (
     <article className="post-card">
       <div className="post-head">
-        <span className={`avatar tone-${post.tone}`}>{post.initials}</span>
+        <button className={`avatar tone-${post.tone}`} onClick={()=>onProfile?.(post.author)} aria-label={`${post.author} 프로필 보기`}>{post.initials}</button>
         <div>
           <b>@{post.author}</b>
           <span>{post.age}</span>
@@ -242,7 +242,7 @@ function PostCard({ post, onBattle, onComment, onRepost, rank }) {
   );
 }
 
-function HomePage({ posts, setPosts, bp, setBp, onCompose }) {
+function HomePage({ posts, setPosts, bp, setBp, onCompose, onProfile }) {
   const [feed, setFeed] = useState("유저 피드");
   const [window, setWindow] = useState("오늘");
   const [category, setCategory] = useState("노출");
@@ -315,6 +315,7 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose }) {
                 onBattle={setBattle}
                 onComment={setCommentPost}
                 onRepost={repost}
+                onProfile={onProfile}
               />
             ))}
           </div>
@@ -324,6 +325,7 @@ function HomePage({ posts, setPosts, bp, setBp, onCompose }) {
             onBattle={setBattle}
             onComment={setCommentPost}
             onRepost={repost}
+            onProfile={onProfile}
           />
         )}
         <button className="fab" onClick={onCompose}>
@@ -486,7 +488,7 @@ function BattleModal({ post, bp, onClose, onFinish }) {
   );
 }
 
-function MapPage({ pins, setPins, lifetime, bp, setBp }) {
+function MapPage({ pins, setPins, lifetime, bp, setBp, onProfile }) {
   const mapEl = useRef(null),
     mapRef = useRef(null),
     layerRef = useRef(null);
@@ -578,7 +580,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
           <div className="pin-detail-content">
             <div className="pin-creator">
               <Coin symbol={selected.coin} size="sm" />
-              <img src={selected.creatorImage || asset("koin-korae-app-icon-blue-v2.png")} alt="핀 생성자 프로필" />
+              <button className="pin-creator-profile" onClick={()=>onProfile(selected.creator || "battle_newbie")} aria-label="핀 생성자 프로필 보기"><img src={selected.creatorImage || asset("koin-korae-app-icon-blue-v2.png")} alt="핀 생성자 프로필" /></button>
               <span>@{selected.creator || "battle_newbie"}</span>
             </div>
             <small>
@@ -841,8 +843,10 @@ function CheckinPage({ bp, setBp, lifetime, setLifetime }) {
     </main>
   );
 }
-function ProfilePage({ posts, pins, bp, lifetime }) {
+function ProfilePage({ posts, setPosts, pins, bp, setBp, lifetime, username }) {
   const [view, setView] = useState("프로필");
+  const [battle,setBattle]=useState(null);
+  const isMe=username==="battle_newbie";
   const tier =
     lifetime >= 10000 ? "Gold" : lifetime >= 1000 ? "Silver" : "Bronze";
   const people={팔로워:['coinlover','eth_builder','mapmaker'],팔로잉:['blockwhale','sol_runner'],친구:['ethernaut','xrpulse']};
@@ -853,7 +857,7 @@ function ProfilePage({ posts, pins, bp, lifetime }) {
     <main className="profile-page-x">
       <section className="profile-head">
         <img className="profile-avatar" src={asset("koin-korae-app-icon-blue-v2.png")} alt="내 프로필" />
-        <h1>@battle_newbie</h1>
+        <h1>@{username}</h1>
         <p>투명한 피드와 열린 커뮤니티를 응원합니다.</p>
         <div className="profile-social"><button onClick={()=>setView('팔로워')}><b>128</b> 팔로워</button><button onClick={()=>setView('팔로잉')}><b>64</b> 팔로잉</button></div>
       </section>
@@ -869,9 +873,10 @@ function ProfilePage({ posts, pins, bp, lifetime }) {
         </div>
         <i style={{ width: `${Math.min(100, lifetime / 10)}%` }} />
       </section>
-      <div className="profile-links"><button onClick={()=>setView('친구')}>친구목록</button><button onClick={()=>setView('PIN')}>PIN</button><button onClick={()=>setView('댓글')}>댓글</button></div>
+      {isMe&&<div className="profile-links"><button onClick={()=>setView('친구')}>친구목록</button><button onClick={()=>setView('PIN')}>PIN</button><button onClick={()=>setView('댓글')}>댓글</button></div>}
       <h2 className="profile-feed-title">내 Feed</h2>
-      <div className="feed">{posts.length?posts.map((p,i)=><PostCard key={p.id} post={p} rank={i+1} onBattle={()=>{}} onComment={()=>{}} onRepost={()=>{}}/>):<Empty text="아직 작성한 Feed가 없습니다"/>}</div>
+      <div className="feed">{posts.length?posts.map((p,i)=><PostCard key={p.id} post={p} rank={i+1} onBattle={setBattle} onComment={()=>{}} onRepost={()=>{}}/>):<Empty text="아직 작성한 Feed가 없습니다"/>}</div>
+      {battle&&<BattleModal post={battle} bp={bp} onClose={()=>setBattle(null)} onFinish={(type,score)=>{setBp(v=>v-1);setPosts(all=>all.map(p=>p.id===battle.id?{...p,[type]:p[type]+score}:p));setBattle(null)}}/>}
     </main>
   );
 }
@@ -988,7 +993,9 @@ function App() {
     [pins, setPins] = useState(seedPins),
     [bp, setBp] = useState(24),
     [lifetime, setLifetime] = useState(680),
-    [compose, setCompose] = useState(false);
+    [compose, setCompose] = useState(false),
+    [profileUser,setProfileUser]=useState("battle_newbie");
+  const openProfile=(username="battle_newbie")=>{setProfileUser(username);setPage("profile")};
   useEffect(() => {
     if (!compose) return;
     history.pushState({ battleFeedOverlay: "composer" }, "");
@@ -1002,7 +1009,7 @@ function App() {
   };
   return (
     <div className={`app-shell ${page === "map" ? "map-active" : ""}`}>
-      <Header bp={bp} onProfile={()=>setPage("profile")} />
+      <Header bp={bp} onProfile={()=>openProfile("battle_newbie")} />
       {page === "home" && (
         <HomePage
           posts={posts}
@@ -1010,6 +1017,7 @@ function App() {
           bp={bp}
           setBp={setBp}
           onCompose={() => setCompose(true)}
+          onProfile={openProfile}
         />
       )}{" "}
       {page === "map" && (
@@ -1019,6 +1027,7 @@ function App() {
           lifetime={lifetime}
           bp={bp}
           setBp={setBp}
+          onProfile={openProfile}
         />
       )}{" "}
       {page === "check" && (
@@ -1031,10 +1040,13 @@ function App() {
       )}{" "}
       {page === "profile" && (
         <ProfilePage
-          posts={posts.filter((p) => p.author === "battle_newbie")}
+          posts={posts.filter((p) => p.author === profileUser)}
+          setPosts={setPosts}
           pins={pins}
           bp={bp}
+          setBp={setBp}
           lifetime={lifetime}
+          username={profileUser}
         />
       )}
       <nav className="bottom-nav">
@@ -1042,7 +1054,7 @@ function App() {
           <button
             key={id}
             className={page === id ? "active" : ""}
-            onClick={() => setPage(id)}
+            onClick={() => id==="profile"?openProfile("battle_newbie"):setPage(id)}
           >
             <Icon />
             <span>{label}</span>
