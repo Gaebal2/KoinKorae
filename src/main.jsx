@@ -8,6 +8,7 @@ import {
   ChevronUp,
   CircleUserRound,
   Home,
+  ImagePlus,
   Map,
   MapPin,
   MessageCircle,
@@ -24,6 +25,8 @@ import cmcCoins from "./cmc-top100.json";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./styles.css";
+
+const asset = (name) => `${import.meta.env.BASE_URL}${name}`;
 
 const seedPosts = [
   {
@@ -95,6 +98,9 @@ const seedPins = [
     lat: 37.5719,
     lng: 126.9769,
     owner: false,
+    image: asset("cinema-feed.png"),
+    creator: "ethernaut",
+    creatorImage: asset("icon-192.png"),
   },
   {
     id: 2,
@@ -107,6 +113,9 @@ const seedPins = [
     lat: 37.5663,
     lng: 126.9828,
     owner: false,
+    image: asset("cinema-feed.png"),
+    creator: "blockwhale",
+    creatorImage: asset("icon-192.png"),
   },
   {
     id: 3,
@@ -119,6 +128,9 @@ const seedPins = [
     lat: 37.5628,
     lng: 126.973,
     owner: false,
+    image: asset("cinema-feed.png"),
+    creator: "sol_runner",
+    creatorImage: asset("icon-192.png"),
   },
 ];
 const windows = ["오늘", "이번 달", "올해", "전체"];
@@ -504,6 +516,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
       const c = map.getCenter();
       setCenter({ lat: +c.lat.toFixed(6), lng: +c.lng.toFixed(6) });
     });
+    map.on("click", () => setSelected(null));
     mapRef.current = map;
     return () => {
       map.remove();
@@ -523,7 +536,10 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
       });
       L.marker([p.lat, p.lng], { icon })
         .addTo(layer)
-        .on("click", () => setSelected(p));
+        .on("click", (event) => {
+          L.DomEvent.stopPropagation(event.originalEvent);
+          setSelected(p);
+        });
     });
     layerRef.current = layer;
   }, [pins]);
@@ -551,8 +567,15 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
       </div>
       {selected && (
         <div className="pin-detail">
-          <Coin symbol={selected.coin} />
-          <div>
+          {selected.image && (
+            <img className="pin-detail-photo" src={selected.image} alt="핀 등록 사진" />
+          )}
+          <div className="pin-detail-content">
+            <div className="pin-creator">
+              <img src={selected.creatorImage || asset("icon-192.png")} alt="핀 생성자 프로필" />
+              <span>@{selected.creator || "battle_newbie"}</span>
+              <Coin symbol={selected.coin} size="sm" />
+            </div>
             <small>
               {selected.category} · 거래 {selected.tradeCoins?.join(", ")}
             </small>
@@ -583,7 +606,7 @@ function MapPage({ pins, setPins, lifetime, bp, setBp }) {
           onSave={(p) => {
             setPins((ps) => [
               ...ps,
-              { ...p, id: Date.now(), owner: true, category: "커뮤니티" },
+              { ...p, id: Date.now(), owner: true, category: "커뮤니티", creator: "battle_newbie", creatorImage: asset("icon-192.png") },
             ]);
             setBp((v) => v - 1);
             setEditing(false);
@@ -602,7 +625,9 @@ function PinForm({ center, onClose, onSave }) {
     link: "",
     lat: center.lat,
     lng: center.lng,
+    image: "",
   });
+  const fileRef = useRef(null);
   const coins = cmcCoins.slice(0, 30);
   const toggle = (s) =>
     setForm((f) => ({
@@ -618,6 +643,13 @@ function PinForm({ center, onClose, onSave }) {
     form.tradeCoins.length > 0 &&
     Number.isFinite(+form.lat) &&
     Number.isFinite(+form.lng);
+  const chooseImage = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setForm((current) => ({ ...current, image: reader.result }));
+    reader.readAsDataURL(file);
+  };
   return (
     <Modal title="새 지도 핀" onClose={onClose}>
       <div className="pin-location">
@@ -694,6 +726,17 @@ function PinForm({ center, onClose, onSave }) {
           onChange={(e) => setForm({ ...form, link: e.target.value })}
           placeholder="https:// 홈페이지 또는 소셜 링크"
         />
+      </Field>
+      <Field label="사진 (선택 · 1장)">
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={chooseImage} />
+        {form.image ? (
+          <div className="pin-photo-preview">
+            <img src={form.image} alt="업로드 사진 미리보기" />
+            <button type="button" onClick={() => setForm({ ...form, image: "" })}><X /></button>
+          </div>
+        ) : (
+          <button type="button" className="pin-photo-picker" onClick={() => fileRef.current?.click()}><ImagePlus />사진 선택</button>
+        )}
       </Field>
       <button
         className="primary"
